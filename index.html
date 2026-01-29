@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Your Name</title>
+    <meta name="description" content="Simple personal landing page." />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="header">
+        <h1>Your Name</h1>
+        <p class="subtitle">Short tagline or role (e.g., Princeton • Builder • Research)</p>
+      </header>
+
+      <section class="card" aria-label="Bio">
+        <h2>Bio</h2>
+        <p>
+          Write a short bio here. Keep it simple—one to three sentences is plenty.
+          You can mention what you’re working on, what you care about, and a contact link.
+        </p>
+        <p class="meta">
+          <a href="mailto:you@example.com">you@example.com</a>
+          <span class="dot">•</span>
+          <a href="https://twitter.com/yourhandle" rel="me">Twitter</a>
+          <span class="dot">•</span>
+          <a href="https://github.com/yourhandle" rel="me">GitHub</a>
+        </p>
+      </section>
+
+      <section class="card" aria-label="Links">
+        <h2>Links</h2>
+        <ul class="links">
+          <!-- Replace these with your own PDFs/links. Put PDFs in /assets and update the hrefs. -->
+          <li><a href="assets/example.pdf">Example PDF (put your file in /assets)</a></li>
+          <li><a href="https://example.com">External link</a></li>
+        </ul>
+      </section>
+
+      <footer class="footer">
+        <p>© <span id="year"></span> Your Name</p>
+      </footer>
+    </main>
+
+    <script>
+      // Small nicety: keep the year current.
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
