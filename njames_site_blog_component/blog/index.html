@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nick James — Blog</title>
+    <meta name="description" content="Notes and short essays." />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <div class="blog-header">
+        <h1>Blog</h1>
+        <p class="meta" style="margin:0;">
+          <a href="../">Home</a>
+          <span class="dot">•</span>
+          <a href="https://www.gradient.build">Gradient</a>
+        </p>
+      </div>
+      <p class="blog-subtitle">Click a tab to read a post. Add new posts by editing <code>blog/posts.js</code>.</p>
+
+      <section class="card" aria-label="Blog posts">
+        <div id="tabs" class="tabs" role="tablist" aria-label="Post list"></div>
+
+        <article id="post" class="post" aria-live="polite"></article>
+
+        <p class="small-muted" style="margin-top:16px;">
+          Tip: you can deep-link to a post with <code>/blog/#your-slug</code>.
+        </p>
+      </section>
+
+      <footer class="footer">
+        <p>© <span id="year"></span> Princeton University</p>
+      </footer>
+    </main>
+
+    <script src="./posts.js"></script>
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      // --- helpers ---
+      const el = (tag, attrs = {}, children = []) => {
+        const n = document.createElement(tag);
+        for (const [k, v] of Object.entries(attrs)) {
+          if (k === "class") n.className = v;
+          else if (k.startsWith("on") && typeof v === "function") n.addEventListener(k.slice(2), v);
+          else n.setAttribute(k, v);
+        }
+        for (const c of children) n.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+        return n;
+      };
+
+      const formatDate = (iso) => {
+        // ISO "YYYY-MM-DD" -> "Jan 31, 2026"
+        const d = new Date(iso + "T00:00:00");
+        return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+      };
+
+      const byNewest = (a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0);
+
+      const posts = (window.BLOG_POSTS || []).slice().sort(byNewest);
+
+      const tabs = document.getElementById("tabs");
+      const postContainer = document.getElementById("post");
+
+      function setActive(slug) {
+        const p = posts.find(x => x.slug === slug) || posts[0];
+        if (!p) {
+          postContainer.innerHTML = "<p class='small-muted'>No posts yet. Add one in <code>blog/posts.js</code>.</p>";
+          return;
+        }
+
+        // Update selected tab
+        [...tabs.querySelectorAll("button[role='tab']")].forEach(btn => {
+          const isSelected = btn.getAttribute("data-slug") === p.slug;
+          btn.setAttribute("aria-selected", isSelected ? "true" : "false");
+          btn.tabIndex = isSelected ? 0 : -1;
+        });
+
+        // Render post
+        postContainer.innerHTML = "";
+        postContainer.appendChild(el("h2", {}, [p.title]));
+        postContainer.appendChild(el("div", { class: "date" }, [formatDate(p.date)]));
+
+        // Content is HTML (keeps this build-less and GitHub Pages friendly).
+        const content = el("div", { class: "content" });
+        content.innerHTML = p.html;
+        postContainer.appendChild(content);
+
+        // Set hash
+        if (location.hash.replace("#","") !== p.slug) {
+          history.replaceState(null, "", "#" + p.slug);
+        }
+
+        // Title
+        document.title = "Nick James — " + p.title;
+      }
+
+      function buildTabs() {
+        tabs.innerHTML = "";
+        posts.forEach((p, idx) => {
+          const btn = el("button", {
+            class: "tab",
+            role: "tab",
+            "aria-selected": "false",
+            "data-slug": p.slug,
+            tabindex: "-1",
+            onclick: () => setActive(p.slug)
+          }, [
+            el("span", { class: "tab-title" }, [p.title]),
+            el("span", { class: "tab-date" }, [formatDate(p.date)])
+          ]);
+          tabs.appendChild(btn);
+        });
+
+        // keyboard nav
+        tabs.addEventListener("keydown", (e) => {
+          const keys = ["ArrowLeft", "ArrowRight", "Home", "End"];
+          if (!keys.includes(e.key)) return;
+
+          const btns = [...tabs.querySelectorAll("button[role='tab']")];
+          const activeIndex = btns.findIndex(b => b.getAttribute("aria-selected") === "true");
+          let next = activeIndex >= 0 ? activeIndex : 0;
+
+          if (e.key === "ArrowLeft") next = Math.max(0, activeIndex - 1);
+          if (e.key === "ArrowRight") next = Math.min(btns.length - 1, activeIndex + 1);
+          if (e.key === "Home") next = 0;
+          if (e.key === "End") next = btns.length - 1;
+
+          btns[next].focus();
+          setActive(btns[next].getAttribute("data-slug"));
+          e.preventDefault();
+        });
+      }
+
+      buildTabs();
+
+      const initialSlug = (location.hash || "").replace("#", "");
+      setActive(initialSlug || (posts[0] && posts[0].slug));
+    </script>
+  </body>
+</html>

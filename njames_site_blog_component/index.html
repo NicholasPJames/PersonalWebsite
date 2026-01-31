@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nick James</title>
+    <meta name="description" content="Simple personal landing page." />
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- Optional: nicer previews when you share links -->
+    <meta property="og:title" content="Nick James" />
+    <meta property="og:description" content="Math, comparative literature, topology, and Greek poetry." />
+    <meta property="og:type" content="website" />
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="header">
+        <h1>Nick James</h1>
+        <p class="subtitle">"Anyone can cook. But only the fearless can be great." - Chef Gusteau</p>
+      </header>
+
+      <section class="card" aria-label="Bio">
+        <h2>Biography</h2>
+        <p>
+          Hi! I'm Nick. I study math and comparative literature at Princeton University. I'm a co-founder of <a href="https://www.gradient.build">Gradient</a>, and really like topology and Greek poetry.
+        </p>
+        <p class="meta">
+          <a href="mailto:nj0130@princeton.edu">Email</a>
+          <span class="dot">•</span>
+          <a href="https://x.com/IsotropicPBNJ" rel="me">X</a>
+          <span class="dot">•</span>
+          <a href="https://www.linkedin.com/in/nick-james-25520027b" rel="me">LinkedIn</a>
+          <span class="dot">•</span>
+          <a href="./blog/">Blog</a>
+        </p>
+      </section>
+
+      <section class="card" aria-label="Blog">
+        <h2>Blog</h2>
+        <p>
+          Short notes on math, startups, and whatever I'm reading. Click below to browse posts.
+        </p>
+        <p class="meta">
+          <a href="./blog/">Open blog</a>
+          <span class="dot">•</span>
+          <span class="small-muted">Static, GitHub Pages-friendly</span>
+        </p>
+      </section>
+
+      <section class="card" aria-label="Links">
+        <h2>Expository Work</h2>
+        <ul class="links">
+          <!-- Replace these with your own PDFs/links. Put PDFs in /assets and update the hrefs. -->
+          <li><a href="https://drive.google.com/file/d/15gEtlNRWJY7SLqg7Xig1ZKToDLIsmM6a/view?usp=sharing">Heegaard Floer Homology Introduction</a></li>
+          <li><a href="https://drive.google.com/file/d/1utHE9CUI1EFvrMExSLshEvD_T1GJ24d2/view?usp=sharing">The p-Adic Solenoid and Pontryagin Duality</a></li>
+          <li><a href="https://drive.google.com/file/d/10VFeS8zHCKGOtfuMy81nqYNMDZRRZ3h3/view?usp=sharing">Characteristic Classes and Cobordism Groups</a></li>
+          <li><a href="https://drive.google.com/file/d/1C8KpIK-jfVJI44cx_TJJ0k-r6AzrrDez/view?usp=sharing">The Beltrami Equation</a></li>
+        </ul>
+      </section>
+
+      <footer class="footer">
+        <p>© <span id="year"></span> Princeton University</p>
+      </footer>
+    </main>
+
+    <script>
+      // Small nicety: keep the year current.
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
