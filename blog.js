@@ -211,21 +211,28 @@ const BlogEngine = (() => {
 
   /** Render inline Markdown: bold, italic, code, links. */
   function inlineRender(text) {
-    return escHtml(text)
-      // Inline code (render first to protect content inside)
+    // Protect math before escaping HTML
+    const mathChunks = [];
+    text = text.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, match => {
+      mathChunks.push(match);
+      return `%%MATH${mathChunks.length - 1}%%`;
+    });
+  
+    let result = escHtml(text)
       .replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`)
-      // Bold
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/__(.+?)__/g, '<strong>$1</strong>')
-      // Italic
       .replace(/\*(.+?)\*/g, '<em>$1</em>')
       .replace(/_(.+?)_/g, '<em>$1</em>')
-      // Links [text](url)
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, txt, href) => {
         const safeHref = href.startsWith('http') || href.startsWith('/') || href.startsWith('mailto:')
           ? href : '#';
         return `<a href="${escAttr(safeHref)}" target="_blank" rel="noopener">${txt}</a>`;
       });
+  
+    // Restore math expressions unescaped
+    result = result.replace(/%%MATH(\d+)%%/g, (_, i) => mathChunks[+i]);
+    return result;
   }
 
   function escHtml(s) {
