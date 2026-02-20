@@ -39,7 +39,7 @@
       <section class="card" aria-label="Expository Work">
         <h2>Expository Work</h2>
         <ul class="link-list">
-          <li><a href="assets/heegaard-floer.pdf">Heegaard Floer Homology Introduction</a></li>
+          <li><a href="assets/heegaard-floer..pdf">Heegaard Floer Homology Introduction</a></li>
           <li><a href="assets/p-adic-solenoid.pdf">The p-Adic Solenoid and Pontryagin Duality</a></li>
           <li><a href="assets/characteristic-classes.pdf">Characteristic Classes and Cobordism Groups</a></li>
           <li><a href="assets/beltrami-equation.pdf">The Beltrami Equation</a></li>
@@ -49,7 +49,7 @@
       <section class="card" aria-label="Recent Musings">
         <h2>Recent Musings</h2>
         <div id="home-blog-list">
-          <p class="muted-text">No posts yet.</p>
+          <p class="muted-text">Loading...</p>
         </div>
         <p class="meta" style="margin-top:14px;">
           <a href="blog.html">All posts →</a>
@@ -59,10 +59,13 @@
 
     <script src="blog.js"></script>
     <script>
-      (function () {
-        const posts = BlogEngine.getPosts().slice(0, 3);
+      (async function () {
+        const posts = (await BlogEngine.getPosts()).slice(0, 3);
         const el = document.getElementById('home-blog-list');
-        if (posts.length === 0) return;
+        if (posts.length === 0) {
+          el.innerHTML = '<p class="muted-text">No posts yet.</p>';
+          return;
+        }
         el.innerHTML = posts.map(p => `
           <div class="blog-row">
             <a href="blog-post.html?id=${p.id}" class="blog-row-title">${p.title}</a>
