@@ -86,31 +86,41 @@ const BlogEngine = (() => {
   /** Return a plain-text excerpt from a Markdown body. */
   function getExcerpt(md, maxLen = 160) {
     const plain = md
-      .replace(/#{1,6}\s+/g, '')           // headings
-      .replace(/!\[.*?\]\(.*?\)/g, '')      // images
-      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // links → text
-      .replace(/[*_`~]/g, '')              // emphasis chars
-      .replace(/\n+/g, ' ')               // newlines → space
+      .replace(/<svg[\s\S]*?<\/svg>/gi, '')        // strip SVGs
+      .replace(/#{1,6}\s+/g, '')                   // headings
+      .replace(/!\[.*?\]\(.*?\)/g, '')             // images
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')   // links → text
+      .replace(/[*_`~]/g, '')                      // emphasis chars
+      .replace(/\n+/g, ' ')                        // newlines → space
       .trim();
     if (plain.length <= maxLen) return plain;
     return plain.slice(0, plain.lastIndexOf(' ', maxLen)) + '…';
   }
 
   /**
-   * Very small Markdown → HTML renderer.
+   * Markdown → HTML renderer.
    * Handles headings, bold, italic, inline code, code blocks,
-   * blockquotes, unordered/ordered lists, horizontal rules, links, and paragraphs.
+   * blockquotes, unordered/ordered lists, horizontal rules, links,
+   * paragraphs, inline SVG, and LaTeX math (via MathJax).
    */
   function renderMarkdown(md) {
     if (!md) return '';
 
-    let html = md;
+    // ── 1. Pull out SVGs before any processing ──
+    const svgChunks = [];
+    md = md.replace(/<svg[\s\S]*?<\/svg>/gi, match => {
+      svgChunks.push(match);
+      return `%%SVG${svgChunks.length - 1}%%`;
+    });
 
-    // Escape HTML entities first (avoid XSS in raw text)
-    // We'll selectively un-escape within allowed constructs.
-    // We process line-by-line for block elements, then inline.
+    // ── 2. Pull out math before HTML escaping ──
+    const mathChunks = [];
+    md = md.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, match => {
+      mathChunks.push(match);
+      return `%%MATH${mathChunks.length - 1}%%`;
+    });
 
-    const lines = html.split('\n');
+    const lines = md.split('\n');
     const out = [];
     let i = 0;
 
@@ -180,6 +190,13 @@ const BlogEngine = (() => {
         continue;
       }
 
+      // SVG placeholder line — emit as-is
+      if (/^%%SVG\d+%%$/.test(line.trim())) {
+        out.push(line.trim());
+        i++;
+        continue;
+      }
+
       // Blank line → paragraph break
       if (line.trim() === '') {
         i++;
@@ -196,7 +213,8 @@ const BlogEngine = (() => {
         !/^[-*+]\s/.test(lines[i]) &&
         !/^\d+\.\s/.test(lines[i]) &&
         !lines[i].startsWith('```') &&
-        !/^(\*\*\*|---|___)\s*$/.test(lines[i])
+        !/^(\*\*\*|---|___)\s*$/.test(lines[i]) &&
+        !/^%%SVG\d+%%$/.test(lines[i].trim())
       ) {
         paraLines.push(lines[i]);
         i++;
@@ -206,33 +224,30 @@ const BlogEngine = (() => {
       }
     }
 
-    return out.join('\n');
+    // ── 3. Restore SVGs and math ──
+    return out.join('\n')
+      .replace(/%%SVG(\d+)%%/g, (_, idx) => svgChunks[+idx])
+      .replace(/%%MATH(\d+)%%/g, (_, idx) => mathChunks[+idx]);
   }
 
   /** Render inline Markdown: bold, italic, code, links. */
   function inlineRender(text) {
-    // Protect math before escaping HTML
-    const mathChunks = [];
-    text = text.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, match => {
-      mathChunks.push(match);
-      return `%%MATH${mathChunks.length - 1}%%`;
-    });
-  
-    let result = escHtml(text)
+    // Restore any math placeholders first so escHtml doesn't touch them
+    return escHtml(text)
+      // Inline code
       .replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`)
+      // Bold
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/__(.+?)__/g, '<strong>$1</strong>')
+      // Italic
       .replace(/\*(.+?)\*/g, '<em>$1</em>')
       .replace(/_(.+?)_/g, '<em>$1</em>')
+      // Links [text](url)
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, txt, href) => {
         const safeHref = href.startsWith('http') || href.startsWith('/') || href.startsWith('mailto:')
           ? href : '#';
         return `<a href="${escAttr(safeHref)}" target="_blank" rel="noopener">${txt}</a>`;
       });
-  
-    // Restore math expressions unescaped
-    result = result.replace(/%%MATH(\d+)%%/g, (_, i) => mathChunks[+i]);
-    return result;
   }
 
   function escHtml(s) {
