@@ -20,7 +20,6 @@
             FF: "\\mathbb{F}",
             HH: "\\mathbb{H}",
             TT: "\\mathbb{T}",
-          
             // Topology
             cl: "\\overline",
             interior: "\\operatorname{int}",
@@ -28,7 +27,6 @@
             supp: "\\operatorname{supp}",
             diam: "\\operatorname{diam}",
             dist: "\\operatorname{dist}",
-          
             // Algebra / Linear
             id: "\\operatorname{id}",
             im: "\\operatorname{im}",
@@ -41,21 +39,18 @@
             Aut: "\\operatorname{Aut}",
             GL: "\\operatorname{GL}",
             SL: "\\operatorname{SL}",
-          
             // Analysis
             norm: ["\\left\\|#1\\right\\|", 1],
             abs: ["\\left|#1\\right|", 1],
             ip: ["\\left\\langle #1,\\, #2\\right\\rangle", 2],
             eps: "\\varepsilon",
             ph: "\\varphi",
-          
             // Calculus / Differential
             dd: ["\\,\\mathrm{d}#1", 1],
             pd: ["\\frac{\\partial #1}{\\partial #2}", 2],
             grad: "\\nabla",
             Lapl: "\\Delta",
-          
-            // Category theory (useful for algebraic topology)
+            // Category theory
             catC: "\\mathcal{C}",
             catD: "\\mathcal{D}",
             Ob: "\\operatorname{Ob}",
@@ -63,8 +58,7 @@
             colim: "\\operatorname{colim}",
             holim: "\\operatorname{holim}",
             hocolim: "\\operatorname{hocolim}",
-          
-            // Algebraic topology specific
+            // Algebraic topology
             Ho: "\\operatorname{Ho}",
             Map: "\\operatorname{Map}",
             hofib: "\\operatorname{hofib}",
@@ -74,7 +68,7 @@
       };
     </script>
     <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-</head>
+  </head>
   <body>
     <nav class="nav">
       <a href="index.html" class="nav-name" style="border:none;">Nick James</a>
@@ -88,26 +82,34 @@
       <a href="blog.html" class="post-back">← All posts</a>
 
       <div id="post-content">
-        <p class="muted-text">Post not found.</p>
+        <p class="muted-text">Loading...</p>
       </div>
     </main>
 
     <script src="blog.js"></script>
     <script>
-      (function () {
+      (async function () {
         const params = new URLSearchParams(window.location.search);
         const id = params.get('id');
-        const post = id ? BlogEngine.getPost(id) : null;
+        const post = id ? await BlogEngine.getPost(id) : null;
+        const el = document.getElementById('post-content');
 
-        if (!post) return;
+        if (!post) {
+          el.innerHTML = '<p class="muted-text">Post not found.</p>';
+          return;
+        }
 
         document.title = post.title + ' — Nick James';
 
-        document.getElementById('post-content').innerHTML = `
+        el.innerHTML = `
           <h1 class="post-title">${post.title}</h1>
           <p class="post-date">${BlogEngine.formatDate(post.date)}</p>
           <div class="post-body">${BlogEngine.renderMarkdown(post.body)}</div>
         `;
+
+        if (window.MathJax) {
+          MathJax.typesetPromise([el]);
+        }
       })();
     </script>
   </body>
