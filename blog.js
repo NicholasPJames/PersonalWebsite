@@ -8,7 +8,7 @@
 
 const BlogEngine = (() => {
   const SUPABASE_URL = 'https://hhfvdppuplqhubvhoqhz.supabase.co';
-  const SUPABASE_KEY = 'YOUR_PUBLISHABLE_KEY_HERE'; // paste your publishable key here
+  const SUPABASE_KEY = 'sb_publishable_5OPZfytGWXxC_ugFtxxD3w_uj5lgUMR'; // paste your publishable key here
 
   // ── Supabase helpers ─────────────────────────────────────────────────────
 
