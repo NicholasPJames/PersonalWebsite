@@ -1,119 +1,107 @@
 /**
  * BlogEngine — lightweight client-side blog system.
- * Posts are stored in localStorage as JSON.
- * Key: "nj_blog_posts"
+ * Posts are stored in Supabase.
  *
  * Post schema:
  *   { id, title, body, date, published }
  */
 
 const BlogEngine = (() => {
-  const STORAGE_KEY = 'nj_blog_posts';
+  const SUPABASE_URL = 'https://hhfvdppuplqhubvhoqhz.supabase.co';
+  const SUPABASE_KEY = 'YOUR_PUBLISHABLE_KEY_HERE'; // paste your publishable key here
 
-  // ── Storage helpers ─────────────────────────────────────────────────────
+  // ── Supabase helpers ─────────────────────────────────────────────────────
 
-  function load() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    } catch (_) {
-      return [];
-    }
-  }
-
-  function save(posts) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+  async function supabase(method, body, id) {
+    const url = `${SUPABASE_URL}/rest/v1/posts${id ? `?id=eq.${id}` : ''}`;
+    const res = await fetch(url, {
+      method,
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation',
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const text = await res.text();
+    return text ? JSON.parse(text) : [];
   }
 
   // ── Public API ───────────────────────────────────────────────────────────
 
-  /**
-   * Return posts sorted newest-first.
-   * @param {boolean} includeDrafts - default false (public pages only see published)
-   */
-  function getPosts(includeDrafts = false) {
-    const posts = load();
-    return posts
-      .filter(p => includeDrafts || p.published)
-      .sort((a, b) => new Date(b.date) - new Date(a.date));
+  async function getPosts(includeDrafts = false) {
+    let url = `${SUPABASE_URL}/rest/v1/posts?order=date.desc`;
+    if (!includeDrafts) url += '&published=eq.true';
+    const res = await fetch(url, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+      },
+    });
+    return res.json();
   }
 
-  /** Return a single post by id (regardless of published state). */
-  function getPost(id) {
-    return load().find(p => p.id === id) || null;
+  async function getPost(id) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/posts?id=eq.${id}`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+      },
+    });
+    const data = await res.json();
+    return data[0] || null;
   }
 
-  /** Create a new post. Returns the created post. */
-  function createPost({ title, body, published = false }) {
-    const posts = load();
-    const post = {
-      id: crypto.randomUUID
-        ? crypto.randomUUID()
-        : Date.now().toString(36) + Math.random().toString(36).slice(2),
+  async function createPost({ title, body, published = false }) {
+    const data = await supabase('POST', {
       title,
       body,
       date: new Date().toISOString(),
       published,
-    };
-    posts.push(post);
-    save(posts);
-    return post;
+    });
+    return data[0];
   }
 
-  /** Update an existing post by id. */
-  function updatePost(id, fields) {
-    const posts = load();
-    const idx = posts.findIndex(p => p.id === id);
-    if (idx === -1) return null;
-    posts[idx] = { ...posts[idx], ...fields };
-    save(posts);
-    return posts[idx];
+  async function updatePost(id, fields) {
+    const data = await supabase('PATCH', fields, id);
+    return data[0];
   }
 
-  /** Delete a post by id. */
-  function deletePost(id) {
-    const posts = load().filter(p => p.id !== id);
-    save(posts);
+  async function deletePost(id) {
+    await supabase('DELETE', null, id);
   }
 
   // ── Formatting helpers ───────────────────────────────────────────────────
 
-  /** Format an ISO date string to a human-readable form. */
   function formatDate(iso) {
     const d = new Date(iso);
     return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   }
 
-  /** Return a plain-text excerpt from a Markdown body. */
   function getExcerpt(md, maxLen = 160) {
     const plain = md
-      .replace(/<svg[\s\S]*?<\/svg>/gi, '')        // strip SVGs
-      .replace(/#{1,6}\s+/g, '')                   // headings
-      .replace(/!\[.*?\]\(.*?\)/g, '')             // images
-      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')   // links → text
-      .replace(/[*_`~]/g, '')                      // emphasis chars
-      .replace(/\n+/g, ' ')                        // newlines → space
+      .replace(/<svg[\s\S]*?<\/svg>/gi, '')
+      .replace(/#{1,6}\s+/g, '')
+      .replace(/!\[.*?\]\(.*?\)/g, '')
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+      .replace(/[*_`~]/g, '')
+      .replace(/\n+/g, ' ')
       .trim();
     if (plain.length <= maxLen) return plain;
     return plain.slice(0, plain.lastIndexOf(' ', maxLen)) + '…';
   }
 
-  /**
-   * Markdown → HTML renderer.
-   * Handles headings, bold, italic, inline code, code blocks,
-   * blockquotes, unordered/ordered lists, horizontal rules, links,
-   * paragraphs, inline SVG, and LaTeX math (via MathJax).
-   */
   function renderMarkdown(md) {
     if (!md) return '';
 
-    // ── 1. Pull out SVGs before any processing ──
     const svgChunks = [];
     md = md.replace(/<svg[\s\S]*?<\/svg>/gi, match => {
       svgChunks.push(match);
       return `%%SVG${svgChunks.length - 1}%%`;
     });
 
-    // ── 2. Pull out math before HTML escaping ──
     const mathChunks = [];
     md = md.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, match => {
       mathChunks.push(match);
@@ -127,7 +115,6 @@ const BlogEngine = (() => {
     while (i < lines.length) {
       const line = lines[i];
 
-      // Fenced code blocks
       if (line.startsWith('```')) {
         const lang = line.slice(3).trim();
         const codeLines = [];
@@ -141,14 +128,12 @@ const BlogEngine = (() => {
         continue;
       }
 
-      // Horizontal rule
       if (/^(\*\*\*|---|___)\s*$/.test(line)) {
         out.push('<hr>');
         i++;
         continue;
       }
 
-      // Headings
       const hMatch = line.match(/^(#{1,6})\s+(.*)/);
       if (hMatch) {
         const level = hMatch[1].length;
@@ -157,7 +142,6 @@ const BlogEngine = (() => {
         continue;
       }
 
-      // Blockquote
       if (line.startsWith('> ')) {
         const bqLines = [];
         while (i < lines.length && lines[i].startsWith('> ')) {
@@ -168,7 +152,6 @@ const BlogEngine = (() => {
         continue;
       }
 
-      // Unordered list
       if (/^[-*+]\s/.test(line)) {
         const items = [];
         while (i < lines.length && /^[-*+]\s/.test(lines[i])) {
@@ -179,7 +162,6 @@ const BlogEngine = (() => {
         continue;
       }
 
-      // Ordered list
       if (/^\d+\.\s/.test(line)) {
         const items = [];
         while (i < lines.length && /^\d+\.\s/.test(lines[i])) {
@@ -190,20 +172,17 @@ const BlogEngine = (() => {
         continue;
       }
 
-      // SVG placeholder line — emit as-is
       if (/^%%SVG\d+%%$/.test(line.trim())) {
         out.push(line.trim());
         i++;
         continue;
       }
 
-      // Blank line → paragraph break
       if (line.trim() === '') {
         i++;
         continue;
       }
 
-      // Paragraph: gather consecutive non-empty, non-special lines
       const paraLines = [];
       while (
         i < lines.length &&
@@ -224,25 +203,18 @@ const BlogEngine = (() => {
       }
     }
 
-    // ── 3. Restore SVGs and math ──
     return out.join('\n')
       .replace(/%%SVG(\d+)%%/g, (_, idx) => svgChunks[+idx])
       .replace(/%%MATH(\d+)%%/g, (_, idx) => mathChunks[+idx]);
   }
 
-  /** Render inline Markdown: bold, italic, code, links. */
   function inlineRender(text) {
-    // Restore any math placeholders first so escHtml doesn't touch them
     return escHtml(text)
-      // Inline code
       .replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`)
-      // Bold
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/__(.+?)__/g, '<strong>$1</strong>')
-      // Italic
       .replace(/\*(.+?)\*/g, '<em>$1</em>')
       .replace(/_(.+?)_/g, '<em>$1</em>')
-      // Links [text](url)
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, txt, href) => {
         const safeHref = href.startsWith('http') || href.startsWith('/') || href.startsWith('mailto:')
           ? href : '#';
@@ -261,8 +233,6 @@ const BlogEngine = (() => {
   function escAttr(s) {
     return String(s).replace(/"/g, '&quot;');
   }
-
-  // ── Public surface ────────────────────────────────────────────────────────
 
   return {
     getPosts,
