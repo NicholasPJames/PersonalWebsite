@@ -130,7 +130,7 @@
       <div style="margin-top:56px;">
         <h2 style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 16px;">All Posts</h2>
         <div id="posts-table-container">
-          <div class="empty-state">No posts yet.</div>
+          <div class="empty-state">Loading...</div>
         </div>
       </div>
     </div>
@@ -142,8 +142,8 @@
     <script>
       let previewVisible = false;
 
-      function renderTable() {
-        const posts = BlogEngine.getPosts(true); // include drafts
+      async function renderTable() {
+        const posts = await BlogEngine.getPosts(true);
         const container = document.getElementById('posts-table-container');
 
         if (posts.length === 0) {
@@ -189,7 +189,7 @@
         `;
       }
 
-      function savePost(publish) {
+      async function savePost(publish) {
         const id = document.getElementById('edit-id').value;
         const title = document.getElementById('post-title').value.trim();
         const body = document.getElementById('post-body').value;
@@ -200,18 +200,18 @@
         }
 
         if (id) {
-          BlogEngine.updatePost(id, { title, body, published: publish });
+          await BlogEngine.updatePost(id, { title, body, published: publish });
         } else {
-          BlogEngine.createPost({ title, body, published: publish });
+          await BlogEngine.createPost({ title, body, published: publish });
         }
 
         resetEditor();
-        renderTable();
+        await renderTable();
         showToast(publish ? 'Post published.' : 'Draft saved.');
       }
 
-      function editPost(id) {
-        const post = BlogEngine.getPost(id);
+      async function editPost(id) {
+        const post = await BlogEngine.getPost(id);
         if (!post) return;
 
         document.getElementById('edit-id').value = post.id;
@@ -224,10 +224,10 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
-      function deletePost(id) {
+      async function deletePost(id) {
         if (!confirm('Delete this post? This cannot be undone.')) return;
-        BlogEngine.deletePost(id);
-        renderTable();
+        await BlogEngine.deletePost(id);
+        await renderTable();
         showToast('Post deleted.');
         if (document.getElementById('edit-id').value === id) resetEditor();
       }
@@ -253,7 +253,6 @@
           const body = document.getElementById('post-body').value;
           document.getElementById('preview-content').innerHTML = BlogEngine.renderMarkdown(body);
           pane.style.display = '';
-          // Tell MathJax to render the new content
           if (window.MathJax) {
             MathJax.typesetPromise([document.getElementById('preview-content')]);
           }
@@ -261,6 +260,7 @@
           pane.style.display = 'none';
         }
       }
+
       // ── Toolbar helpers ──
       function wrap(before, after) {
         const ta = document.getElementById('post-body');
