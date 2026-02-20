@@ -253,11 +253,14 @@
           const body = document.getElementById('post-body').value;
           document.getElementById('preview-content').innerHTML = BlogEngine.renderMarkdown(body);
           pane.style.display = '';
+          // Tell MathJax to render the new content
+          if (window.MathJax) {
+            MathJax.typesetPromise([document.getElementById('preview-content')]);
+          }
         } else {
           pane.style.display = 'none';
         }
       }
-
       // ── Toolbar helpers ──
       function wrap(before, after) {
         const ta = document.getElementById('post-body');
