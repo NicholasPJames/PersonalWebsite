@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Post — Nick James</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <a href="index.html" class="nav-name" style="border:none;">Nick James</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="blog.html" class="active">Blog</a>
+      </div>
+    </nav>
+
+    <main class="post-wrap">
+      <a href="blog.html" class="post-back">← All posts</a>
+
+      <div id="post-content">
+        <p class="muted-text">Post not found.</p>
+      </div>
+    </main>
+
+    <script src="blog.js"></script>
+    <script>
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        const post = id ? BlogEngine.getPost(id) : null;
+
+        if (!post) return;
+
+        document.title = post.title + ' — Nick James';
+
+        document.getElementById('post-content').innerHTML = `
+          <h1 class="post-title">${post.title}</h1>
+          <p class="post-date">${BlogEngine.formatDate(post.date)}</p>
+          <div class="post-body">${BlogEngine.renderMarkdown(post.body)}</div>
+        `;
+      })();
+    </script>
+  </body>
+</html>

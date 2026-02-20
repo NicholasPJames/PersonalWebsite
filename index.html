@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nick James</title>
+    <meta name="description" content="Mathematics & comparative literature at Princeton." />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <span class="nav-name">Nick James</span>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="blog.html">Blog</a>
+      </div>
+    </nav>
+
+    <main class="wrap">
+      <header class="header">
+        <h1>Nick James</h1>
+        <p class="subtitle">"Anyone can cook. But only the fearless can be great." — Chef Gusteau</p>
+      </header>
+
+      <section class="card" aria-label="Bio">
+        <h2>Biography</h2>
+        <p>
+          Hi! I'm Nick. I study math and comparative literature at Princeton University. I'm a co-founder of <a href="https://www.gradient.build">Gradient</a>, and really like topology and Greek poetry.
+        </p>
+        <p class="meta">
+          <a href="mailto:nj0130@princeton.edu">Email</a>
+          <span class="dot">·</span>
+          <a href="https://x.com/IsotropicPBNJ" rel="me">X</a>
+          <span class="dot">·</span>
+          <a href="https://www.linkedin.com/in/nick-james-25520027b" rel="me">LinkedIn</a>
+        </p>
+      </section>
+
+      <section class="card" aria-label="Expository Work">
+        <h2>Expository Work</h2>
+        <ul class="link-list">
+          <li><a href="https://drive.google.com/file/d/15gEtlNRWJY7SLqg7Xig1ZKToDLIsmM6a/view?usp=sharing">Heegaard Floer Homology Introduction</a></li>
+          <li><a href="https://drive.google.com/file/d/1utHE9CUI1EFvrMExSLshEvD_T1GJ24d2/view?usp=sharing">The p-Adic Solenoid and Pontryagin Duality</a></li>
+          <li><a href="https://drive.google.com/file/d/10VFeS8zHCKGOtfuMy81nqYNMDZRRZ3h3/view?usp=sharing">Characteristic Classes and Cobordism Groups</a></li>
+          <li><a href="https://drive.google.com/file/d/1C8KpIK-jfVJI44cx_TJJ0k-r6AzrrDez/view?usp=sharing">The Beltrami Equation</a></li>
+        </ul>
+      </section>
+
+      <section class="card" aria-label="Recent Writing">
+        <h2>Recent Writing</h2>
+        <div id="home-blog-list">
+          <p class="muted-text">No posts yet.</p>
+        </div>
+        <p class="meta" style="margin-top:14px;">
+          <a href="blog.html">All posts →</a>
+        </p>
+      </section>
+    </main>
+
+    <script src="blog.js"></script>
+    <script>
+      (function () {
+        const posts = BlogEngine.getPosts().slice(0, 3);
+        const el = document.getElementById('home-blog-list');
+        if (posts.length === 0) return;
+        el.innerHTML = posts.map(p => `
+          <div class="blog-row">
+            <a href="blog-post.html?id=${p.id}" class="blog-row-title">${p.title}</a>
+            <span class="blog-row-date">${BlogEngine.formatDate(p.date)}</span>
+          </div>
+        `).join('');
+      })();
+    </script>
+  </body>
+</html>

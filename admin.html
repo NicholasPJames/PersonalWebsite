@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin — Nick James</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <a href="index.html" class="nav-name" style="border:none;">Nick James</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="blog.html">Blog</a>
+        <a href="admin.html" class="active">Admin</a>
+      </div>
+    </nav>
+
+    <div class="admin-wrap">
+
+      <!-- ── Editor panel ── -->
+      <div id="editor-panel">
+        <div class="admin-header">
+          <h1 id="editor-heading">New Post</h1>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost" id="btn-cancel" onclick="cancelEdit()" style="display:none;">Cancel</button>
+            <button class="btn btn-ghost" id="btn-draft" onclick="savePost(false)">Save draft</button>
+            <button class="btn btn-primary" id="btn-publish" onclick="savePost(true)">Publish</button>
+          </div>
+        </div>
+
+        <input type="hidden" id="edit-id" value="" />
+
+        <div class="editor-field">
+          <label for="post-title">Title</label>
+          <input type="text" id="post-title" class="editor-input" placeholder="Post title…" />
+        </div>
+
+        <div class="editor-field">
+          <label>Body <span style="opacity:.4;font-weight:400;text-transform:none;letter-spacing:0;">— Markdown supported</span></label>
+          <div class="toolbar">
+            <button onclick="wrap('**','**')"><b>B</b></button>
+            <button onclick="wrap('*','*')"><i>I</i></button>
+            <button onclick="wrap('`','`')">code</button>
+            <button onclick="insertHeading(2)">H2</button>
+            <button onclick="insertHeading(3)">H3</button>
+            <button onclick="insertLine('> ')">Quote</button>
+            <button onclick="insertLine('- ')">List</button>
+            <button onclick="insertLine('---')">HR</button>
+            <button onclick="insertLink()">Link</button>
+          </div>
+          <textarea id="post-body" class="editor-textarea" placeholder="Write your post in Markdown…"></textarea>
+        </div>
+
+        <!-- Live preview toggle -->
+        <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+          <button class="btn btn-ghost" onclick="togglePreview()" style="font-size:.8rem;padding:6px 14px;">Preview</button>
+        </div>
+
+        <div id="preview-pane" style="display:none;margin-top:20px;border-top:1px solid var(--border);padding-top:28px;">
+          <p style="font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 16px;">Preview</p>
+          <div class="post-body" id="preview-content"></div>
+        </div>
+      </div>
+
+      <!-- ── Posts list ── -->
+      <div style="margin-top:56px;">
+        <h2 style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 16px;">All Posts</h2>
+        <div id="posts-table-container">
+          <div class="empty-state">No posts yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="blog.js"></script>
+    <script>
+      let previewVisible = false;
+
+      function renderTable() {
+        const posts = BlogEngine.getPosts(true); // include drafts
+        const container = document.getElementById('posts-table-container');
+
+        if (posts.length === 0) {
+          container.innerHTML = '<div class="empty-state">No posts yet.</div>';
+          return;
+        }
+
+        container.innerHTML = `
+          <table class="posts-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${posts.map(p => `
+                <tr>
+                  <td>
+                    <span style="font-weight:500;">${p.title || '<em style="opacity:.4">Untitled</em>'}</span>
+                  </td>
+                  <td style="color:var(--muted);font-size:.82rem;">${BlogEngine.formatDate(p.date)}</td>
+                  <td>
+                    <span class="post-status-badge ${p.published ? 'published' : ''}">
+                      ${p.published ? 'Published' : 'Draft'}
+                    </span>
+                  </td>
+                  <td>
+                    <div style="display:flex;gap:8px;justify-content:flex-end;align-items:center;">
+                      ${p.published
+                        ? `<a href="blog-post.html?id=${p.id}" target="_blank" style="font-size:.8rem;color:var(--muted);border-bottom:none;">View ↗</a>`
+                        : ''}
+                      <button class="btn btn-ghost" style="font-size:.8rem;padding:5px 10px;" onclick="editPost('${p.id}')">Edit</button>
+                      <button class="btn btn-danger" onclick="deletePost('${p.id}')">Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+
+      function savePost(publish) {
+        const id = document.getElementById('edit-id').value;
+        const title = document.getElementById('post-title').value.trim();
+        const body = document.getElementById('post-body').value;
+
+        if (!title) {
+          showToast('Please add a title.');
+          return;
+        }
+
+        if (id) {
+          BlogEngine.updatePost(id, { title, body, published: publish });
+        } else {
+          BlogEngine.createPost({ title, body, published: publish });
+        }
+
+        resetEditor();
+        renderTable();
+        showToast(publish ? 'Post published.' : 'Draft saved.');
+      }
+
+      function editPost(id) {
+        const post = BlogEngine.getPost(id);
+        if (!post) return;
+
+        document.getElementById('edit-id').value = post.id;
+        document.getElementById('post-title').value = post.title;
+        document.getElementById('post-body').value = post.body;
+        document.getElementById('editor-heading').textContent = 'Edit Post';
+        document.getElementById('btn-cancel').style.display = '';
+        document.getElementById('btn-publish').textContent = post.published ? 'Update' : 'Publish';
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function deletePost(id) {
+        if (!confirm('Delete this post? This cannot be undone.')) return;
+        BlogEngine.deletePost(id);
+        renderTable();
+        showToast('Post deleted.');
+        if (document.getElementById('edit-id').value === id) resetEditor();
+      }
+
+      function cancelEdit() {
+        resetEditor();
+      }
+
+      function resetEditor() {
+        document.getElementById('edit-id').value = '';
+        document.getElementById('post-title').value = '';
+        document.getElementById('post-body').value = '';
+        document.getElementById('editor-heading').textContent = 'New Post';
+        document.getElementById('btn-cancel').style.display = 'none';
+        document.getElementById('btn-publish').textContent = 'Publish';
+        if (previewVisible) togglePreview();
+      }
+
+      function togglePreview() {
+        previewVisible = !previewVisible;
+        const pane = document.getElementById('preview-pane');
+        if (previewVisible) {
+          const body = document.getElementById('post-body').value;
+          document.getElementById('preview-content').innerHTML = BlogEngine.renderMarkdown(body);
+          pane.style.display = '';
+        } else {
+          pane.style.display = 'none';
+        }
+      }
+
+      // ── Toolbar helpers ──
+      function wrap(before, after) {
+        const ta = document.getElementById('post-body');
+        const start = ta.selectionStart;
+        const end = ta.selectionEnd;
+        const sel = ta.value.slice(start, end);
+        ta.setRangeText(before + (sel || 'text') + after, start, end, 'select');
+        ta.focus();
+      }
+
+      function insertHeading(level) {
+        const ta = document.getElementById('post-body');
+        const prefix = '#'.repeat(level) + ' ';
+        insertAtLineStart(ta, prefix);
+      }
+
+      function insertLine(prefix) {
+        const ta = document.getElementById('post-body');
+        insertAtLineStart(ta, prefix);
+      }
+
+      function insertAtLineStart(ta, prefix) {
+        const start = ta.selectionStart;
+        const before = ta.value.slice(0, start);
+        const lineStart = before.lastIndexOf('\n') + 1;
+        const newVal = ta.value.slice(0, lineStart) + prefix + ta.value.slice(lineStart);
+        ta.value = newVal;
+        ta.selectionStart = ta.selectionEnd = start + prefix.length;
+        ta.focus();
+      }
+
+      function insertLink() {
+        const ta = document.getElementById('post-body');
+        const start = ta.selectionStart;
+        const end = ta.selectionEnd;
+        const sel = ta.value.slice(start, end) || 'link text';
+        ta.setRangeText(`[${sel}](url)`, start, end, 'end');
+        ta.focus();
+      }
+
+      // ── Toast ──
+      let toastTimer;
+      function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+      }
+
+      // Init
+      renderTable();
+    </script>
+  </body>
+</html>
