@@ -22,17 +22,20 @@
       </header>
 
       <div id="post-list-container">
-        <div class="empty-state">No posts yet.</div>
+        <div class="empty-state">Loading...</div>
       </div>
     </main>
 
     <script src="blog.js"></script>
     <script>
-      (function () {
-        const posts = BlogEngine.getPosts();
+      (async function () {
         const container = document.getElementById('post-list-container');
+        const posts = await BlogEngine.getPosts();
 
-        if (posts.length === 0) return;
+        if (posts.length === 0) {
+          container.innerHTML = '<div class="empty-state">No posts yet.</div>';
+          return;
+        }
 
         const ul = document.createElement('ul');
         ul.className = 'post-list';
