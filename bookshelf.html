@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bookshelf — Nick James</title>
+    <meta name="description" content="Books I've been reading." />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <a href="index.html" class="nav-name" style="border:none;">Nick James</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="blog.html">Blog</a>
+        <a href="bookshelf.html" class="active">Bookshelf</a>
+      </div>
+    </nav>
+
+    <main class="wrap">
+      <header class="blog-header">
+        <h1>Bookshelf</h1>
+        <p class="muted-text" style="margin-top:8px;">Welcome to my bookshelf! While not extensive, it contains a lot of the books and literature in general that I'm thinking about. I made this bookshelf genre agnostic, so feel free to take a look around! Hopefully something catches your eye. If you have any book recommendations, feel free to shoot me an email! I always love learning more about the world.</p>
+      </header>
+
+      <div id="bookshelf-container">
+        <div class="empty-state">Loading...</div>
+      </div>
+    </main>
+
+    <!-- Detail overlay -->
+    <div class="book-overlay" id="book-overlay">
+      <div class="book-detail" id="book-detail">
+        <button class="book-detail-close" id="book-detail-close" aria-label="Close">&times;</button>
+        <div class="book-detail-inner">
+          <img class="book-detail-cover" id="detail-cover" src="" alt="" />
+          <div class="book-detail-info">
+            <h2 class="book-detail-title" id="detail-title"></h2>
+            <p class="book-detail-author" id="detail-author"></p>
+            <div class="book-detail-summary" id="detail-summary"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="bookshelf.js"></script>
+    <script>
+      (async function () {
+        const container = document.getElementById('bookshelf-container');
+        let books = [];
+
+        try {
+          const result = await BookshelfEngine.getBooks();
+          if (Array.isArray(result) && result.length > 0) {
+            books = result;
+          }
+        } catch (e) {
+          // Supabase table likely doesn't exist yet — fall through to demo data
+        }
+
+        // Demo books for previewing design (remove once Supabase 'books' table is set up)
+        if (!books || books.length === 0) {
+          books = [
+            { title: 'The Odyssey', author: 'Homer', cover_url: 'https://covers.openlibrary.org/b/isbn/9780140268867-L.jpg', summary: 'The epic journey of Odysseus returning home from the Trojan War. A foundational text of Western literature that explores themes of cunning, loyalty, and the human desire for home.\n\nHomer weaves a tale that is at once intimate and cosmic — the struggles of one man against gods, monsters, and fate itself.' },
+            { title: 'Topology', author: 'James Munkres', cover_url: 'https://covers.openlibrary.org/b/isbn/9780131816299-L.jpg', summary: 'The definitive introduction to point-set and algebraic topology. Munkres writes with remarkable clarity, making even the most abstract concepts feel approachable.\n\nThis book shaped how I think about continuity, connectedness, and the structure of space itself.' },
+            { title: 'Infinite Jest', author: 'David Foster Wallace', cover_url: 'https://covers.openlibrary.org/b/isbn/9780316066525-L.jpg', summary: 'A sprawling, maximalist novel about addiction, entertainment, and what it means to be human in a hyper-connected world. The footnotes alone could be their own book.\n\nWallace captures something essential about modern life that I haven\'t found anywhere else.' },
+            { title: 'Algebraic Topology', author: 'Allen Hatcher', cover_url: 'https://covers.openlibrary.org/b/isbn/9780521795401-L.jpg', summary: 'Hatcher\'s freely available masterpiece on algebraic topology. Covers fundamental groups, homology, and cohomology with incredible geometric intuition.\n\nThe illustrations alone make this worth reading — Hatcher thinks visually in a way that makes abstract algebra feel tangible.' },
+            { title: 'The Brothers Karamazov', author: 'Fyodor Dostoevsky', cover_url: 'https://covers.openlibrary.org/b/isbn/9780374528379-L.jpg', summary: 'Dostoevsky\'s final and greatest novel. A philosophical epic disguised as a murder mystery, exploring faith, doubt, free will, and the nature of evil.\n\nThe Grand Inquisitor chapter alone justifies the entire book.' },
+            { title: 'Gödel, Escher, Bach', author: 'Douglas Hofstadter', cover_url: 'https://covers.openlibrary.org/b/isbn/9780465026562-L.jpg', summary: 'A playful and profound exploration of how self-reference creates meaning — from formal systems to Bach fugues to Escher drawings.\n\nThis book changed how I think about recursion, consciousness, and the boundaries of mathematics.' },
+            { title: 'The Iliad', author: 'Homer', cover_url: 'https://covers.openlibrary.org/b/isbn/9780140275360-L.jpg', summary: 'The rage of Achilles and the fall of Troy. The oldest surviving work of Western literature and still one of the most powerful.\n\nEvery time I re-read it, I find new layers — the humanity Homer grants even to his enemies is remarkable.' },
+            { title: 'Differential Geometry', author: 'Manfredo do Carmo', cover_url: 'https://covers.openlibrary.org/b/isbn/9780132125895-L.jpg', summary: 'A beautifully written introduction to curves and surfaces. Do Carmo has a gift for building geometric intuition before diving into formalism.\n\nThe exercises are challenging but rewarding — this book teaches you to see the geometry hidden in the equations.' },
+          ];
+        }
+
+        if (books.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              No books on the shelf yet.
+            </div>
+          `;
+          return;
+        }
+
+        // Build the shelf
+        const shelf = document.createElement('div');
+        shelf.className = 'shelf';
+
+        // Left/right scroll arrows
+        const leftArrow = document.createElement('button');
+        leftArrow.className = 'shelf-arrow shelf-arrow-left';
+        leftArrow.innerHTML = '&#8249;';
+        leftArrow.setAttribute('aria-label', 'Scroll left');
+
+        const rightArrow = document.createElement('button');
+        rightArrow.className = 'shelf-arrow shelf-arrow-right';
+        rightArrow.innerHTML = '&#8250;';
+        rightArrow.setAttribute('aria-label', 'Scroll right');
+
+        const track = document.createElement('div');
+        track.className = 'shelf-track';
+
+        books.forEach((book, i) => {
+          const slot = document.createElement('div');
+          slot.className = 'book-slot';
+          slot.setAttribute('data-index', i);
+
+          const coverImg = book.cover_url
+            ? `<img class="book-cover" src="${book.cover_url}" alt="${book.title}" draggable="false" />`
+            : `<div class="book-cover book-cover-placeholder"><span>${book.title}</span></div>`;
+
+          slot.innerHTML = `
+            ${coverImg}
+            <div class="book-label">
+              <span class="book-label-title">${book.title}</span>
+              <span class="book-label-author">${book.author}</span>
+            </div>
+          `;
+
+          slot.addEventListener('click', () => openDetail(book));
+          track.appendChild(slot);
+        });
+
+        shelf.appendChild(leftArrow);
+        shelf.appendChild(track);
+        shelf.appendChild(rightArrow);
+
+        // Wrap the shelf in a card-style frame
+        const frame = document.createElement('div');
+        frame.className = 'shelf-frame';
+        frame.appendChild(shelf);
+
+        container.innerHTML = '';
+        container.appendChild(frame);
+
+        // Scroll logic
+        const scrollAmount = 260;
+
+        leftArrow.addEventListener('click', () => {
+          track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        });
+
+        rightArrow.addEventListener('click', () => {
+          track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        });
+
+        // Arrow visibility
+        function updateArrows() {
+          leftArrow.style.opacity = track.scrollLeft > 10 ? '1' : '0';
+          leftArrow.style.pointerEvents = track.scrollLeft > 10 ? 'auto' : 'none';
+          const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 10;
+          rightArrow.style.opacity = atEnd ? '0' : '1';
+          rightArrow.style.pointerEvents = atEnd ? 'none' : 'auto';
+        }
+
+        track.addEventListener('scroll', updateArrows);
+        updateArrows();
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') {
+            track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+          } else if (e.key === 'ArrowRight') {
+            track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+          } else if (e.key === 'Escape') {
+            closeDetail();
+          }
+        });
+      })();
+
+      // ── Detail overlay ──
+      const overlay = document.getElementById('book-overlay');
+      const closeBtn = document.getElementById('book-detail-close');
+
+      function openDetail(book) {
+        const cover = document.getElementById('detail-cover');
+        const title = document.getElementById('detail-title');
+        const author = document.getElementById('detail-author');
+        const summary = document.getElementById('detail-summary');
+
+        if (book.cover_url) {
+          cover.src = book.cover_url;
+          cover.alt = book.title;
+          cover.style.display = '';
+        } else {
+          cover.style.display = 'none';
+        }
+
+        title.textContent = book.title;
+        author.textContent = 'by ' + book.author;
+        summary.innerHTML = book.summary
+          ? book.summary.split('\n').map(p => p.trim() ? `<p>${p}</p>` : '').join('')
+          : '<p class="muted-text">No notes yet.</p>';
+
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeDetail() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      closeBtn.addEventListener('click', closeDetail);
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeDetail();
+      });
+    </script>
+  </body>
+</html>

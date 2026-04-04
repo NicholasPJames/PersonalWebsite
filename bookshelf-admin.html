@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bookshelf Admin — Nick James</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <a href="index.html" class="nav-name" style="border:none;">Nick James</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="blog.html">Blog</a>
+        <a href="bookshelf.html">Bookshelf</a>
+        <a href="bookshelf-admin.html" class="active">Admin</a>
+      </div>
+    </nav>
+
+    <div class="admin-wrap">
+
+      <!-- ── Editor panel ── -->
+      <div id="editor-panel">
+        <div class="admin-header">
+          <h1 id="editor-heading">Add Book</h1>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost" id="btn-cancel" onclick="cancelEdit()" style="display:none;">Cancel</button>
+            <button class="btn btn-primary" id="btn-save" onclick="saveBook()">Add to shelf</button>
+          </div>
+        </div>
+
+        <input type="hidden" id="edit-id" value="" />
+
+        <div class="editor-field">
+          <label for="book-title">Title</label>
+          <input type="text" id="book-title" class="editor-input" placeholder="Book title…" />
+        </div>
+
+        <div class="editor-field">
+          <label for="book-author">Author</label>
+          <input type="text" id="book-author" class="editor-input" placeholder="Author name…" />
+        </div>
+
+        <div class="editor-field">
+          <label for="book-cover">Cover Image URL</label>
+          <input type="text" id="book-cover" class="editor-input" placeholder="https://… (paste a book cover URL)" />
+        </div>
+
+        <div class="editor-field">
+          <label for="book-order">Sort Order <span style="opacity:.4;font-weight:400;text-transform:none;letter-spacing:0;">— lower numbers appear first</span></label>
+          <input type="number" id="book-order" class="editor-input" placeholder="0" value="0" style="max-width:120px;" />
+        </div>
+
+        <div class="editor-field">
+          <label for="book-summary">Your Notes / Summary</label>
+          <textarea id="book-summary" class="editor-textarea" placeholder="Write your thoughts about this book…" style="min-height:180px;font-family:var(--font);font-size:15px;"></textarea>
+        </div>
+
+        <!-- Cover preview -->
+        <div id="cover-preview" style="display:none;margin-top:16px;">
+          <p style="font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 10px;">Cover Preview</p>
+          <img id="cover-preview-img" style="height:200px;border-radius:6px;border:1px solid var(--border);" />
+        </div>
+      </div>
+
+      <!-- ── Books list ── -->
+      <div style="margin-top:56px;">
+        <h2 style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 16px;">All Books</h2>
+        <div id="books-table-container">
+          <div class="empty-state">Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="bookshelf.js"></script>
+    <script>
+      // Cover preview
+      const coverInput = document.getElementById('book-cover');
+      const coverPreview = document.getElementById('cover-preview');
+      const coverPreviewImg = document.getElementById('cover-preview-img');
+
+      coverInput.addEventListener('input', () => {
+        const url = coverInput.value.trim();
+        if (url) {
+          coverPreviewImg.src = url;
+          coverPreview.style.display = '';
+        } else {
+          coverPreview.style.display = 'none';
+        }
+      });
+
+      coverPreviewImg.addEventListener('error', () => {
+        coverPreview.style.display = 'none';
+      });
+
+      async function renderTable() {
+        const books = await BookshelfEngine.getBooks();
+        const container = document.getElementById('books-table-container');
+
+        if (books.length === 0) {
+          container.innerHTML = '<div class="empty-state">No books yet. Add your first book above.</div>';
+          return;
+        }
+
+        container.innerHTML = `
+          <table class="posts-table">
+            <thead>
+              <tr>
+                <th>Cover</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Order</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${books.map(b => `
+                <tr>
+                  <td style="width:50px;">
+                    ${b.cover_url
+                      ? `<img src="${b.cover_url}" style="height:48px;border-radius:3px;vertical-align:middle;" />`
+                      : '<span class="muted-text">—</span>'}
+                  </td>
+                  <td><span style="font-weight:500;">${b.title}</span></td>
+                  <td style="color:var(--muted);font-size:.88rem;">${b.author}</td>
+                  <td style="color:var(--muted);font-size:.82rem;">${b.sort_order || 0}</td>
+                  <td>
+                    <div style="display:flex;gap:8px;justify-content:flex-end;align-items:center;">
+                      <a href="bookshelf.html" target="_blank" style="font-size:.8rem;color:var(--muted);border-bottom:none;">View ↗</a>
+                      <button class="btn btn-ghost" style="font-size:.8rem;padding:5px 10px;" onclick="editBook('${b.id}')">Edit</button>
+                      <button class="btn btn-danger" onclick="deleteBook('${b.id}')">Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+
+      async function saveBook() {
+        const id = document.getElementById('edit-id').value;
+        const title = document.getElementById('book-title').value.trim();
+        const author = document.getElementById('book-author').value.trim();
+        const cover_url = document.getElementById('book-cover').value.trim();
+        const summary = document.getElementById('book-summary').value;
+        const sort_order = parseInt(document.getElementById('book-order').value) || 0;
+
+        if (!title) {
+          showToast('Please add a title.');
+          return;
+        }
+        if (!author) {
+          showToast('Please add an author.');
+          return;
+        }
+
+        if (id) {
+          await BookshelfEngine.updateBook(id, { title, author, cover_url, summary, sort_order });
+          showToast('Book updated.');
+        } else {
+          await BookshelfEngine.createBook({ title, author, cover_url, summary, sort_order });
+          showToast('Book added to shelf.');
+        }
+
+        resetEditor();
+        await renderTable();
+      }
+
+      async function editBook(id) {
+        const book = await BookshelfEngine.getBook(id);
+        if (!book) return;
+
+        document.getElementById('edit-id').value = book.id;
+        document.getElementById('book-title').value = book.title;
+        document.getElementById('book-author').value = book.author;
+        document.getElementById('book-cover').value = book.cover_url || '';
+        document.getElementById('book-summary').value = book.summary || '';
+        document.getElementById('book-order').value = book.sort_order || 0;
+        document.getElementById('editor-heading').textContent = 'Edit Book';
+        document.getElementById('btn-cancel').style.display = '';
+        document.getElementById('btn-save').textContent = 'Update';
+
+        // Trigger cover preview
+        coverInput.dispatchEvent(new Event('input'));
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      async function deleteBook(id) {
+        if (!confirm('Remove this book from the shelf?')) return;
+        await BookshelfEngine.deleteBook(id);
+        await renderTable();
+        showToast('Book removed.');
+        if (document.getElementById('edit-id').value === id) resetEditor();
+      }
+
+      function cancelEdit() {
+        resetEditor();
+      }
+
+      function resetEditor() {
+        document.getElementById('edit-id').value = '';
+        document.getElementById('book-title').value = '';
+        document.getElementById('book-author').value = '';
+        document.getElementById('book-cover').value = '';
+        document.getElementById('book-summary').value = '';
+        document.getElementById('book-order').value = '0';
+        document.getElementById('editor-heading').textContent = 'Add Book';
+        document.getElementById('btn-cancel').style.display = 'none';
+        document.getElementById('btn-save').textContent = 'Add to shelf';
+        coverPreview.style.display = 'none';
+      }
+
+      // ── Toast ──
+      let toastTimer;
+      function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+      }
+
+      // Init
+      renderTable();
+    </script>
+  </body>
+</html>
