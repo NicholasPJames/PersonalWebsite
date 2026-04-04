@@ -58,19 +58,6 @@
           // Supabase table likely doesn't exist yet — fall through to demo data
         }
 
-        // Demo books for previewing design (remove once Supabase 'books' table is set up)
-        if (!books || books.length === 0) {
-          books = [
-            { title: 'The Odyssey', author: 'Homer', cover_url: 'https://covers.openlibrary.org/b/isbn/9780140268867-L.jpg', summary: 'The epic journey of Odysseus returning home from the Trojan War. A foundational text of Western literature that explores themes of cunning, loyalty, and the human desire for home.\n\nHomer weaves a tale that is at once intimate and cosmic — the struggles of one man against gods, monsters, and fate itself.' },
-            { title: 'Topology', author: 'James Munkres', cover_url: 'https://covers.openlibrary.org/b/isbn/9780131816299-L.jpg', summary: 'The definitive introduction to point-set and algebraic topology. Munkres writes with remarkable clarity, making even the most abstract concepts feel approachable.\n\nThis book shaped how I think about continuity, connectedness, and the structure of space itself.' },
-            { title: 'Infinite Jest', author: 'David Foster Wallace', cover_url: 'https://covers.openlibrary.org/b/isbn/9780316066525-L.jpg', summary: 'A sprawling, maximalist novel about addiction, entertainment, and what it means to be human in a hyper-connected world. The footnotes alone could be their own book.\n\nWallace captures something essential about modern life that I haven\'t found anywhere else.' },
-            { title: 'Algebraic Topology', author: 'Allen Hatcher', cover_url: 'https://covers.openlibrary.org/b/isbn/9780521795401-L.jpg', summary: 'Hatcher\'s freely available masterpiece on algebraic topology. Covers fundamental groups, homology, and cohomology with incredible geometric intuition.\n\nThe illustrations alone make this worth reading — Hatcher thinks visually in a way that makes abstract algebra feel tangible.' },
-            { title: 'The Brothers Karamazov', author: 'Fyodor Dostoevsky', cover_url: 'https://covers.openlibrary.org/b/isbn/9780374528379-L.jpg', summary: 'Dostoevsky\'s final and greatest novel. A philosophical epic disguised as a murder mystery, exploring faith, doubt, free will, and the nature of evil.\n\nThe Grand Inquisitor chapter alone justifies the entire book.' },
-            { title: 'Gödel, Escher, Bach', author: 'Douglas Hofstadter', cover_url: 'https://covers.openlibrary.org/b/isbn/9780465026562-L.jpg', summary: 'A playful and profound exploration of how self-reference creates meaning — from formal systems to Bach fugues to Escher drawings.\n\nThis book changed how I think about recursion, consciousness, and the boundaries of mathematics.' },
-            { title: 'The Iliad', author: 'Homer', cover_url: 'https://covers.openlibrary.org/b/isbn/9780140275360-L.jpg', summary: 'The rage of Achilles and the fall of Troy. The oldest surviving work of Western literature and still one of the most powerful.\n\nEvery time I re-read it, I find new layers — the humanity Homer grants even to his enemies is remarkable.' },
-            { title: 'Differential Geometry', author: 'Manfredo do Carmo', cover_url: 'https://covers.openlibrary.org/b/isbn/9780132125895-L.jpg', summary: 'A beautifully written introduction to curves and surfaces. Do Carmo has a gift for building geometric intuition before diving into formalism.\n\nThe exercises are challenging but rewarding — this book teaches you to see the geometry hidden in the equations.' },
-          ];
-        }
 
         if (books.length === 0) {
           container.innerHTML = `
