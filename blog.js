@@ -209,19 +209,34 @@ const BlogEngine = (() => {
   }
 
   function inlineRender(text) {
-    return escHtml(text)
-      .replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`)
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/__(.+?)__/g, '<strong>$1</strong>')
-      .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      .replace(/_(.+?)_/g, '<em>$1</em>')
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, txt, href) => {
-        const safeHref = href.startsWith('http') || href.startsWith('/') || href.startsWith('mailto:')
-          ? href : '#';
-        return `<a href="${escAttr(safeHref)}" target="_blank" rel="noopener">${txt}</a>`;
-      });
-  }
+  // Protect math before escaping HTML
+  const mathChunks = [];
+  text = text.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, match => {
+    mathChunks.push(match);
+    return `%%MATH${mathChunks.length - 1}%%`;
+  });
 
+  let result = escHtml(text)
+    .replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/__(.+?)__/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/_(.+?)_/g, '<em>$1</em>')
+    // Images ![alt](src) — MUST come before links
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) => {
+      return `<img src="${escAttr(src)}" alt="${escAttr(alt)}" style="max-width:100%; height:auto; display:block; margin: 1.5em auto;">`;
+    })
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, txt, href) => {
+      const safeHref = href.startsWith('http') || href.startsWith('/') || href.startsWith('mailto:')
+        ? href : '#';
+      return `<a href="${escAttr(safeHref)}" target="_blank" rel="noopener">${txt}</a>`;
+    });
+
+  // Restore math expressions unescaped
+  result = result.replace(/%%MATH(\d+)%%/g, (_, i) => mathChunks[+i]);
+  return result;
+  }
+  
   function escHtml(s) {
     return String(s)
       .replace(/&/g, '&amp;')
