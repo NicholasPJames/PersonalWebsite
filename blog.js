@@ -8,7 +8,7 @@
 
 const BlogEngine = (() => {
   const SUPABASE_URL = 'https://hhfvdppuplqhubvhoqhz.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_5OPZfytGWXxC_ugFtxxD3w_uj5lgUMR'; // paste your publishable key here
+  const SUPABASE_KEY = 'sb_publishable_5OPZfytGWXxC_ugFtxxD3w_uj5lgUMR';
 
   // ── Supabase helpers ─────────────────────────────────────────────────────
 
@@ -209,42 +209,43 @@ const BlogEngine = (() => {
   }
 
   function inlineRender(text) {
-  // Protect math before escaping HTML
-  const mathChunks = [];
-  text = text.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, match => {
-    mathChunks.push(match);
-    return `%%MATH${mathChunks.length - 1}%%`;
-  });
+    // Protect math before escaping HTML
+    const mathChunks = [];
+    text = text.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, match => {
+      mathChunks.push(match);
+      return `%%MATH${mathChunks.length - 1}%%`;
+    });
 
-  let result = escHtml(text)
-    .replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`)
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/__(.+?)__/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/_(.+?)_/g, '<em>$1</em>')
-    // Images ![alt](src) — MUST come before links
-    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) => {
-      return `<img src="${escAttr(src)}" alt="${escAttr(alt)}" style="max-width:50%; height:auto; display:block; margin: 1.5em auto;">`;
-    })
-    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, altAndCaption, src) => {
-  // Split on | for optional caption: "alt|caption"
-  const pipeIndex = altAndCaption.indexOf('|');
-  const alt = pipeIndex >= 0 ? altAndCaption.slice(0, pipeIndex).trim() : altAndCaption.trim();
-  const caption = pipeIndex >= 0 ? altAndCaption.slice(pipeIndex + 1).trim() : '';
+    let result = escHtml(text)
+      .replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`)
+      // Images ![alt|caption](src) — MUST come before bold/italic and links
+      .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, altAndCaption, src) => {
+        const pipeIndex = altAndCaption.indexOf('|');
+        const alt = pipeIndex >= 0 ? altAndCaption.slice(0, pipeIndex).trim() : altAndCaption.trim();
+        const caption = pipeIndex >= 0 ? altAndCaption.slice(pipeIndex + 1).trim() : '';
 
-  const imgTag = `<img src="${escAttr(src)}" alt="${escAttr(alt)}" style="max-width:60%; height:auto; display:block; margin: 0 auto;">`;
+        const imgTag = `<img src="${escAttr(src)}" alt="${escAttr(alt)}" style="max-width:50%; height:auto; display:block; margin: 0 auto;">`;
 
-  if (caption) {
-    return `<figure style="text-align:center; margin: 2em 0;">${imgTag}<figcaption style="font-size: 0.9em; color: #888; margin-top: 0.75em; font-style: italic;">${escHtml(caption)}</figcaption></figure>`;
+        if (caption) {
+          return `<figure style="text-align:center; margin: 2em 0;">${imgTag}<figcaption style="font-size: 0.9em; color: #888; margin-top: 0.75em; font-style: italic;">${escHtml(caption)}</figcaption></figure>`;
+        }
+        return `<figure style="margin: 1.5em 0;">${imgTag}</figure>`;
+      })
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/__(.+?)__/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/_(.+?)_/g, '<em>$1</em>')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, txt, href) => {
+        const safeHref = href.startsWith('http') || href.startsWith('/') || href.startsWith('mailto:')
+          ? href : '#';
+        return `<a href="${escAttr(safeHref)}" target="_blank" rel="noopener">${txt}</a>`;
+      });
+
+    // Restore math expressions unescaped
+    result = result.replace(/%%MATH(\d+)%%/g, (_, i) => mathChunks[+i]);
+    return result;
   }
-  return `<figure style="margin: 1.5em 0;">${imgTag}</figure>`;
-  })
 
-  // Restore math expressions unescaped
-  result = result.replace(/%%MATH(\d+)%%/g, (_, i) => mathChunks[+i]);
-  return result;
-  }
-  
   function escHtml(s) {
     return String(s)
       .replace(/&/g, '&amp;')
