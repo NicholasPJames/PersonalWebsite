@@ -224,7 +224,7 @@ const BlogEngine = (() => {
     .replace(/_(.+?)_/g, '<em>$1</em>')
     // Images ![alt](src) — MUST come before links
     .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) => {
-      return `<img src="${escAttr(src)}" alt="${escAttr(alt)}" style="max-width:100%; height:auto; display:block; margin: 1.5em auto;">`;
+      return `<img src="${escAttr(src)}" alt="${escAttr(alt)}" style="max-width:60%; height:auto; display:block; margin: 1.5em auto;">`;
     })
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, txt, href) => {
       const safeHref = href.startsWith('http') || href.startsWith('/') || href.startsWith('mailto:')
