@@ -1,14 +1,14 @@
 /* njames.xyz — minimal black & white */
 :root {
-  --bg: #000;
-  --fg: #fff;
-  --muted: rgba(255,255,255,.55);
-  --border: rgba(255,255,255,.10);
-  --border-hover: rgba(255,255,255,.28);
-  --link: #fff;
-  --link-ul: rgba(255,255,255,.22);
-  --link-ul-hover: rgba(255,255,255,.65);
-  --shadow: 0 8px 32px rgba(0,0,0,.55);
+  --bg: #f5f0e6;
+  --fg: #2c3e2c;
+  --muted: rgba(44,80,44,.55);
+  --border: rgba(44,80,44,.12);
+  --border-hover: rgba(44,80,44,.30);
+  --link: #3a5c3a;
+  --link-ul: rgba(44,80,44,.22);
+  --link-ul-hover: rgba(44,80,44,.60);
+  --shadow: 0 8px 32px rgba(44,80,44,.12);
   --radius: 14px;
   --font: "EB Garamond", Georgia, serif;
   --mono: ui-monospace, "Cascadia Code", "Fira Code", "Courier New", monospace;
@@ -39,7 +39,7 @@ body {
   padding: 0 clamp(20px, 5vw, 56px);
   height: 52px;
   border-bottom: 1px solid var(--border);
-  background: rgba(0,0,0,.88);
+  background: rgba(245,240,230,.92);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -149,7 +149,7 @@ a:hover, a:focus {
   gap: 8px 12px;
   margin-top: 16px;
   color: var(--muted);
-  font-size: .9rem;
+  font-size: 1rem;
 }
 
 .meta a {
@@ -159,7 +159,7 @@ a:hover, a:focus {
 
 .meta a:hover { color: var(--fg); border-bottom-color: var(--link-ul-hover); }
 
-.dot { opacity: .35; font-size: .7rem; }
+.dot { opacity: .35; font-size: .85rem; }
 
 /* ── Link list (papers) ── */
 .link-list {
@@ -192,7 +192,7 @@ a:hover, a:focus {
 
 .blog-row-title {
   flex: 1;
-  font-size: .95rem;
+  font-size: 1rem;
   border-bottom: none;
   color: var(--fg);
 }
@@ -202,7 +202,7 @@ a:hover, a:focus {
 .blog-row-date {
   white-space: nowrap;
   color: var(--muted);
-  font-size: .8rem;
+  font-size: .95rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -244,14 +244,14 @@ a:hover, a:focus {
 .post-item-title:hover { opacity: .75; }
 
 .post-item-meta {
-  font-size: .82rem;
+  font-size: 1rem;
   color: var(--muted);
 }
 
 .post-item-excerpt {
   margin-top: 6px;
-  font-size: .9rem;
-  color: rgba(255,255,255,.65);
+  font-size: 1rem;
+  color: rgba(44,80,44,.75);
   line-height: 1.55;
 }
 
@@ -265,7 +265,7 @@ a:hover, a:focus {
 .post-back {
   display: inline-block;
   margin-bottom: 36px;
-  font-size: .85rem;
+  font-size: 1rem;
   color: var(--muted);
   border-bottom: none;
 }
@@ -281,13 +281,13 @@ a:hover, a:focus {
 }
 
 .post-date {
-  font-size: .82rem;
+  font-size: 1rem;
   color: var(--muted);
   margin: 0 0 40px;
 }
 
 .post-body {
-  font-size: 1rem;
+  font-size: 1.2rem;
   line-height: 1.75;
 }
 
@@ -306,13 +306,13 @@ a:hover, a:focus {
 .post-body code {
   font-family: var(--mono);
   font-size: .87em;
-  background: rgba(255,255,255,.07);
+  background: rgba(44,80,44,.08);
   border-radius: 4px;
   padding: .15em .4em;
 }
 
 .post-body pre {
-  background: rgba(255,255,255,.05);
+  background: rgba(44,80,44,.05);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 16px;
@@ -372,7 +372,7 @@ a:hover, a:focus {
 .editor-input,
 .editor-textarea {
   width: 100%;
-  background: rgba(255,255,255,.04);
+  background: rgba(44,80,44,.04);
   border: 1px solid var(--border);
   border-radius: 8px;
   color: var(--fg);
@@ -407,8 +407,8 @@ a:hover, a:focus {
 }
 
 .btn-primary {
-  background: #fff;
-  color: #000;
+  background: #2c3e2c;
+  color: #f5f0e6;
 }
 
 .btn-primary:hover { opacity: .88; }
@@ -439,7 +439,7 @@ a:hover, a:focus {
 }
 
 .toolbar button {
-  background: rgba(255,255,255,.06);
+  background: rgba(44,80,44,.06);
   border: 1px solid var(--border);
   border-radius: 5px;
   color: var(--fg);
@@ -449,7 +449,7 @@ a:hover, a:focus {
   transition: background .12s;
 }
 
-.toolbar button:hover { background: rgba(255,255,255,.12); }
+.toolbar button:hover { background: rgba(44,80,44,.12); }
 
 /* ── Posts management table ── */
 .posts-table {
@@ -493,11 +493,11 @@ a:hover, a:focus {
 
 .post-status-badge.published {
   border-color: rgba(255,255,255,.22);
-  color: #fff;
+  color: #2c3e2c;
 }
 
 /* ── Utility ── */
-.muted-text { color: var(--muted); font-size: .9rem; margin: 0; }
+.muted-text { color: var(--muted); font-size: 1rem; margin: 0; }
 .empty-state { text-align: center; padding: 48px 0; color: var(--muted); }
 
 /* ── Notification toast ── */
@@ -505,8 +505,8 @@ a:hover, a:focus {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  background: #fff;
-  color: #000;
+  background: #2c3e2c;
+  color: #f5f0e6;
   font-size: .875rem;
   font-weight: 500;
   padding: 10px 18px;
@@ -550,7 +550,7 @@ a:hover, a:focus {
   top: 50%;
   transform: translateY(-60%);
   z-index: 10;
-  background: rgba(255,255,255,.06);
+  background: rgba(44,80,44,.06);
   border: 1px solid var(--border);
   color: var(--fg);
   font-size: 2rem;
@@ -565,7 +565,7 @@ a:hover, a:focus {
   backdrop-filter: blur(8px);
 }
 
-.shelf-arrow:hover { background: rgba(255,255,255,.12); }
+.shelf-arrow:hover { background: rgba(44,80,44,.12); }
 .shelf-arrow-left { left: -6px; }
 .shelf-arrow-right { right: -6px; }
 
@@ -600,9 +600,9 @@ a:hover, a:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,.04);
+  background: rgba(44,80,44,.04);
   padding: 16px;
-  font-size: .78rem;
+  font-size: .9rem;
   color: var(--muted);
   line-height: 1.4;
 }
@@ -613,7 +613,7 @@ a:hover, a:focus {
 
 .book-label-title {
   display: block;
-  font-size: .82rem;
+  font-size: .95rem;
   font-weight: 600;
   color: var(--fg);
   line-height: 1.3;
@@ -624,7 +624,7 @@ a:hover, a:focus {
 
 .book-label-author {
   display: block;
-  font-size: .72rem;
+  font-size: .85rem;
   color: var(--muted);
   margin-top: 2px;
   white-space: nowrap;
@@ -642,7 +642,7 @@ a:hover, a:focus {
   position: fixed;
   inset: 0;
   z-index: 200;
-  background: rgba(0,0,0,.75);
+  background: rgba(44,80,44,.55);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -664,7 +664,7 @@ a:hover, a:focus {
   width: 90%;
   max-height: 85vh;
   overflow-y: auto;
-  background: rgba(12,12,12,.96);
+  background: rgba(242,237,225,.98);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 36px;
@@ -723,16 +723,16 @@ a:hover, a:focus {
 }
 
 .book-detail-author {
-  font-size: .9rem;
+  font-size: 1rem;
   color: var(--muted);
   margin: 0 0 20px;
   font-style: italic;
 }
 
 .book-detail-summary {
-  font-size: .95rem;
+  font-size: 1rem;
   line-height: 1.7;
-  color: rgba(255,255,255,.8);
+  color: rgba(44,80,44,.85);
 }
 
 .book-detail-summary p {
