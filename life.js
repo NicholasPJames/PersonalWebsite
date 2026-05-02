@@ -87,40 +87,59 @@
     const nav = document.querySelector('.nav');
     if (nav) pushRect(nav.getBoundingClientRect());
 
-    // h1 title — use Range to get actual text width (not full block width).
-    // Extend downward to subtitle's top so cells don't appear in the gap
-    // between title and quote.
+    // Helper: get actual text bounds via Range API (instead of block width).
+    function textRect(el) {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const r = range.getBoundingClientRect();
+      return r.width > 0 && r.height > 0 ? r : null;
+    }
+
     const h1 = document.querySelector('.header h1');
     const subtitle = document.querySelector('.subtitle');
+    const cards = Array.from(document.querySelectorAll('.card'));
+    const firstCardTop = cards.length
+      ? cards[0].getBoundingClientRect().top
+      : null;
+
+    // h1 — text width, extended down to subtitle top to cover the gap.
     if (h1) {
-      const range = document.createRange();
-      range.selectNodeContents(h1);
-      const tr = range.getBoundingClientRect();
-      if (tr.width > 0 && tr.height > 0) {
+      const tr = textRect(h1);
+      if (tr) {
         const bottom = subtitle
           ? subtitle.getBoundingClientRect().top
           : tr.bottom;
-        const r = {
+        pushRect({
           left: tr.left,
           top: tr.top,
           right: tr.right,
-          bottom: bottom,
+          bottom,
           width: tr.width,
           height: bottom - tr.top,
-        };
-        pushRect(r);
+        });
       }
     }
 
-    // Merge subtitle + all cards into one continuous occluder so cells
-    // don't render in any gaps between them.
-    const cards = Array.from(document.querySelectorAll('.card'));
-    const blocks = [];
-    if (subtitle) blocks.push(subtitle);
-    blocks.push(...cards);
-    if (blocks.length > 0) {
+    // Subtitle quote — text width, extended down to the first card's top.
+    if (subtitle) {
+      const tr = textRect(subtitle);
+      if (tr) {
+        const bottom = firstCardTop ?? tr.bottom;
+        pushRect({
+          left: tr.left,
+          top: tr.top,
+          right: tr.right,
+          bottom,
+          width: tr.width,
+          height: bottom - tr.top,
+        });
+      }
+    }
+
+    // Cards — one merged occluder covering first card top through last card bottom.
+    if (cards.length > 0) {
       let left = Infinity, right = -Infinity, top = Infinity, bottom = -Infinity;
-      for (const el of blocks) {
+      for (const el of cards) {
         const r = el.getBoundingClientRect();
         if (r.width <= 0 || r.height <= 0) continue;
         left = Math.min(left, r.left);
