@@ -3,6 +3,12 @@
  * Avoids content cards. Move the mouse to paint new life.
  */
 (function () {
+  // Skip on mobile / narrow viewports — there's no margin space for cells
+  // and they end up crammed awkwardly next to the content.
+  if (window.innerWidth < 760 || 'ontouchstart' in window && window.innerWidth < 900) {
+    return;
+  }
+
   const canvas = document.createElement('canvas');
   canvas.id = 'life-canvas';
   canvas.style.cssText =

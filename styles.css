@@ -171,7 +171,8 @@ a:hover, a:focus {
 }
 
 .link-list li::before {
-  content: "↗";
+  content: "↗\FE0E";
+  font-variant-emoji: text;
   margin-right: 8px;
   opacity: .35;
   font-size: .8em;
