@@ -111,13 +111,13 @@
           <div class="post-body">${BlogEngine.renderMarkdown(post.body)}</div>
         `;
 
-        if (window.MathJax && MathJax.typesetPromise) {
-          MathJax.typesetPromise([el]);
-        } else {
-          window.addEventListener('load', () => {
-            if (window.MathJax) MathJax.typesetPromise([el]);
-          });
-        }
+        (function waitForMathJax() {
+          if (window.MathJax?.typesetPromise) {
+            MathJax.typesetPromise([el]);
+          } else {
+            setTimeout(waitForMathJax, 100);
+          }
+        })();
       })();
     </script>
   </body>

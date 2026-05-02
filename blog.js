@@ -103,9 +103,12 @@ const BlogEngine = (() => {
     });
 
     const mathChunks = [];
+    const displayMathIndices = new Set();
     md = md.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, match => {
+      const idx = mathChunks.length;
+      if (match.startsWith('$$')) displayMathIndices.add(idx);
       mathChunks.push(match);
-      return `%%MATH${mathChunks.length - 1}%%`;
+      return `%%MATH${idx}%%`;
     });
 
     const lines = md.split('\n');
@@ -178,6 +181,13 @@ const BlogEngine = (() => {
         continue;
       }
 
+      const dmMatch = line.trim().match(/^%%MATH(\d+)%%$/);
+      if (dmMatch && displayMathIndices.has(+dmMatch[1])) {
+        out.push(line.trim());
+        i++;
+        continue;
+      }
+
       if (line.trim() === '') {
         i++;
         continue;
@@ -193,7 +203,8 @@ const BlogEngine = (() => {
         !/^\d+\.\s/.test(lines[i]) &&
         !lines[i].startsWith('```') &&
         !/^(\*\*\*|---|___)\s*$/.test(lines[i]) &&
-        !/^%%SVG\d+%%$/.test(lines[i].trim())
+        !/^%%SVG\d+%%$/.test(lines[i].trim()) &&
+        !(lines[i].trim().match(/^%%MATH(\d+)%%$/) && displayMathIndices.has(+lines[i].trim().match(/^%%MATH(\d+)%%$/)[1]))
       ) {
         paraLines.push(lines[i]);
         i++;
