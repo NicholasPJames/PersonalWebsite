@@ -10,7 +10,7 @@
   --link-ul-hover: rgba(255,255,255,.65);
   --shadow: 0 8px 32px rgba(0,0,0,.55);
   --radius: 14px;
-  --font: serif;
+  --font: "EB Garamond", Georgia, serif;
   --mono: ui-monospace, "Cascadia Code", "Fira Code", "Courier New", monospace;
 }
 
