@@ -19,8 +19,10 @@
 
   let cols = 0, rows = 0;
   let docW = 0, docH = 0;
-  let grid, next, age;
+  let grid, next, age, vis;
   let occluders = [];
+
+  const FADE_RATE = 0.10; // per-frame lerp toward target opacity
 
   function getDocSize() {
     const w = window.innerWidth;
@@ -55,28 +57,82 @@
     grid = new Uint8Array(cols * rows);
     next = new Uint8Array(cols * rows);
     age = new Uint16Array(cols * rows);
+    vis = new Float32Array(cols * rows);
     for (let i = 0; i < grid.length; i++) {
       if (Math.random() < SEED_DENSITY) grid[i] = 1;
     }
   }
 
   // Occluders use document coordinates (page-relative)
+  function pushRect(r, padX = 8, padY = 6, extraH = 0) {
+    if (r.width <= 0 || r.height <= 0) return;
+    occluders.push({
+      x: r.left + window.scrollX - padX,
+      y: r.top + window.scrollY - padY,
+      w: r.width + padX * 2,
+      h: r.height + padY * 2 + extraH,
+    });
+  }
+
   function computeOccluders() {
     occluders = [];
-    document.querySelectorAll('.nav, .wrap').forEach((el) => {
-      const r = el.getBoundingClientRect();
-      if (r.width === 0 || r.height === 0) return;
-      // Shrink horizontal padding on .wrap so cubes can come closer to card edges
-      const isWrap = el.classList.contains('wrap');
-      const px = isWrap ? -38 : 6;
-      const py = 6;
-      occluders.push({
-        x: r.left + window.scrollX - px,
-        y: r.top + window.scrollY - py,
-        w: r.width + 2 * px,
-        h: r.height + 2 * py,
-      });
-    });
+
+    // Nav bar
+    const nav = document.querySelector('.nav');
+    if (nav) pushRect(nav.getBoundingClientRect());
+
+    // h1 title — use Range to get actual text width (not full block width).
+    // Extend downward to subtitle's top so cells don't appear in the gap
+    // between title and quote.
+    const h1 = document.querySelector('.header h1');
+    const subtitle = document.querySelector('.subtitle');
+    if (h1) {
+      const range = document.createRange();
+      range.selectNodeContents(h1);
+      const tr = range.getBoundingClientRect();
+      if (tr.width > 0 && tr.height > 0) {
+        const bottom = subtitle
+          ? subtitle.getBoundingClientRect().top
+          : tr.bottom;
+        const r = {
+          left: tr.left,
+          top: tr.top,
+          right: tr.right,
+          bottom: bottom,
+          width: tr.width,
+          height: bottom - tr.top,
+        };
+        pushRect(r);
+      }
+    }
+
+    // Merge subtitle + all cards into one continuous occluder so cells
+    // don't render in any gaps between them.
+    const cards = Array.from(document.querySelectorAll('.card'));
+    const blocks = [];
+    if (subtitle) blocks.push(subtitle);
+    blocks.push(...cards);
+    if (blocks.length > 0) {
+      let left = Infinity, right = -Infinity, top = Infinity, bottom = -Infinity;
+      for (const el of blocks) {
+        const r = el.getBoundingClientRect();
+        if (r.width <= 0 || r.height <= 0) continue;
+        left = Math.min(left, r.left);
+        right = Math.max(right, r.right);
+        top = Math.min(top, r.top);
+        bottom = Math.max(bottom, r.bottom);
+      }
+      if (isFinite(left)) {
+        pushRect({
+          left,
+          top,
+          right,
+          bottom,
+          width: right - left,
+          height: bottom - top,
+        });
+      }
+    }
   }
 
   function step() {
@@ -132,10 +188,16 @@
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
         const idx = y * cols + x;
-        if (!grid[idx]) continue;
-        const a = Math.min(age[idx], 20) / 20;
-        const opacity = 0.34 - a * 0.16;
-        ctx.fillStyle = `rgba(44, 80, 44, ${opacity})`;
+        // Compute target opacity for this cell
+        let target = 0;
+        if (grid[idx]) {
+          const a = Math.min(age[idx], 20) / 20;
+          target = 0.34 - a * 0.16;
+        }
+        // Smoothly lerp visible opacity toward target
+        vis[idx] += (target - vis[idx]) * FADE_RATE;
+        if (vis[idx] < 0.005) continue;
+        ctx.fillStyle = `rgba(44, 80, 44, ${vis[idx]})`;
         ctx.fillRect(x * CELL + 2, y * CELL + 2, CELL - 4, CELL - 4);
       }
     }
