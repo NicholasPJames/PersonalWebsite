@@ -220,13 +220,10 @@ const BlogEngine = (() => {
   }
 
   function inlineRender(text) {
-    // Protect math before escaping HTML
-    const mathChunks = [];
-    text = text.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, match => {
-      mathChunks.push(match);
-      return `%%MATH${mathChunks.length - 1}%%`;
-    });
-
+    // Math has already been replaced with %%MATH<n>%% placeholders by the
+    // top-level renderMarkdown pass; those placeholders contain no markdown-
+    // special characters, so they pass through escHtml + the formatters
+    // unchanged and get restored to original $...$ at the very end.
     let result = escHtml(text)
       .replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`)
       // Images ![alt|caption](src) — MUST come before bold/italic and links
@@ -252,8 +249,6 @@ const BlogEngine = (() => {
         return `<a href="${escAttr(safeHref)}" target="_blank" rel="noopener">${txt}</a>`;
       });
 
-    // Restore math expressions unescaped
-    result = result.replace(/%%MATH(\d+)%%/g, (_, i) => mathChunks[+i]);
     return result;
   }
 
