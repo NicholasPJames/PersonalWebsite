@@ -23,6 +23,19 @@ const ROOT = path.join(__dirname, '..');
 const OUT_DIR = path.join(ROOT, 'p');
 const TEMPLATE_PATH = path.join(ROOT, 'blog-post.html');
 
+function escXml(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function rfc822(d) {
+  return new Date(d).toUTCString();
+}
+
 function escHtml(s) {
   return String(s ?? '')
     .replace(/&/g, '&amp;')
@@ -121,6 +134,40 @@ async function main() {
     fs.writeFileSync(path.join(OUT_DIR, `${post.id}.html`), html);
   }
   console.log(`Generated ${posts.length} post page(s) in /p`);
+
+  // ── RSS feed ────────────────────────────────────────────────────────
+  const sorted = [...posts].sort(
+    (a, b) => new Date(b.date) - new Date(a.date)
+  );
+  const items = sorted
+    .map((post) => {
+      const url = `${SITE_ORIGIN}/p/${encodeURIComponent(post.id)}.html`;
+      const desc = getExcerpt(post.body, 400);
+      return `    <item>
+      <title>${escXml(post.title || 'Untitled')}</title>
+      <link>${escXml(url)}</link>
+      <guid isPermaLink="true">${escXml(url)}</guid>
+      <pubDate>${rfc822(post.date)}</pubDate>
+      <description>${escXml(desc)}</description>
+    </item>`;
+    })
+    .join('\n');
+
+  const feed = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nick James</title>
+    <link>${SITE_ORIGIN}</link>
+    <description>Mathematics and comparative literature.</description>
+    <language>en-us</language>
+    <atom:link href="${SITE_ORIGIN}/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>${rfc822(new Date())}</lastBuildDate>
+${items}
+  </channel>
+</rss>
+`;
+  fs.writeFileSync(path.join(ROOT, 'feed.xml'), feed);
+  console.log('Generated feed.xml');
 }
 
 main().catch((err) => {
