@@ -9,7 +9,7 @@
   --link-ul: rgba(44,80,44,.22);
   --link-ul-hover: rgba(44,80,44,.60);
   --shadow: 0 8px 32px rgba(44,80,44,.12);
-  --radius: 14px;
+  --radius: 0;
   --font: "EB Garamond", Georgia, serif;
   --mono: ui-monospace, "Cascadia Code", "Fira Code", "Courier New", monospace;
 }
@@ -104,11 +104,6 @@ body {
   padding: 22px 24px 20px;
   margin: 14px 0;
   box-shadow: var(--shadow);
-  transition: border-color .2s;
-}
-
-.card:hover {
-  border-color: var(--border-hover);
 }
 
 .card h2 {
@@ -296,7 +291,7 @@ a:hover, a:focus {
   display: block;
   max-width: 100%;
   background: #2c3e2c;
-  border-radius: 10px;
+  border-radius: 0;
   padding: 20px;
   margin: 1.5em auto;
 }
@@ -317,14 +312,14 @@ a:hover, a:focus {
   font-family: var(--mono);
   font-size: .87em;
   background: rgba(44,80,44,.08);
-  border-radius: 4px;
+  border-radius: 0;
   padding: .15em .4em;
 }
 
 .post-body pre {
   background: rgba(44,80,44,.05);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 0;
   padding: 16px;
   overflow-x: auto;
   margin: 1.5em 0;
@@ -384,7 +379,7 @@ a:hover, a:focus {
   width: 100%;
   background: rgba(44,80,44,.04);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 0;
   color: var(--fg);
   font: 15px/1.6 var(--font);
   padding: 10px 14px;
@@ -409,7 +404,7 @@ a:hover, a:focus {
   align-items: center;
   gap: 6px;
   padding: 9px 18px;
-  border-radius: 8px;
+  border-radius: 0;
   font: 600 .875rem var(--font);
   cursor: pointer;
   border: none;
@@ -451,7 +446,7 @@ a:hover, a:focus {
 .toolbar button {
   background: rgba(44,80,44,.06);
   border: 1px solid var(--border);
-  border-radius: 5px;
+  border-radius: 0;
   color: var(--fg);
   font: .8rem var(--mono);
   padding: 4px 10px;
@@ -496,7 +491,7 @@ a:hover, a:focus {
   text-transform: uppercase;
   letter-spacing: .07em;
   padding: 2px 7px;
-  border-radius: 20px;
+  border-radius: 0;
   border: 1px solid var(--border);
   color: var(--muted);
 }
@@ -520,7 +515,7 @@ a:hover, a:focus {
   font-size: .875rem;
   font-weight: 500;
   padding: 10px 18px;
-  border-radius: 8px;
+  border-radius: 0;
   box-shadow: 0 4px 24px rgba(0,0,0,.5);
   opacity: 0;
   transform: translateY(8px);
@@ -566,7 +561,7 @@ a:hover, a:focus {
   font-size: 2rem;
   width: 40px;
   height: 56px;
-  border-radius: 8px;
+  border-radius: 0;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -594,7 +589,7 @@ a:hover, a:focus {
   width: 140px;
   height: 210px;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 0;
   border: 1px solid var(--border);
   box-shadow: 4px 4px 16px rgba(0,0,0,.5), 0 0 1px rgba(255,255,255,.08);
   transition: box-shadow .2s, border-color .2s;
@@ -713,7 +708,7 @@ a:hover, a:focus {
   width: 160px;
   height: 240px;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 0;
   border: 1px solid var(--border);
   flex-shrink: 0;
   box-shadow: 4px 4px 20px rgba(0,0,0,.4);
