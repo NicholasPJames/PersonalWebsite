@@ -80,7 +80,7 @@
         }
         el.innerHTML = posts.map(p => `
           <div class="blog-row">
-            <a href="blog-post.html?id=${p.id}" class="blog-row-title">${p.title}</a>
+            <a href="p/${p.id}.html" class="blog-row-title">${p.title}</a>
             <span class="blog-row-date">${BlogEngine.formatDate(p.date)}</span>
           </div>
         `).join('');

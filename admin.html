@@ -180,7 +180,7 @@
                   <td>
                     <div style="display:flex;gap:8px;justify-content:flex-end;align-items:center;">
                       ${p.published
-                        ? `<a href="blog-post.html?id=${p.id}" target="_blank" style="font-size:.8rem;color:var(--muted);border-bottom:none;">View ↗</a>`
+                        ? `<a href="p/${p.id}.html" target="_blank" style="font-size:.8rem;color:var(--muted);border-bottom:none;">View ↗</a>`
                         : ''}
                       <button class="btn btn-ghost" style="font-size:.8rem;padding:5px 10px;" onclick="editPost('${p.id}')">Edit</button>
                       <button class="btn btn-danger" onclick="deletePost('${p.id}')">Delete</button>

@@ -48,7 +48,7 @@
           const excerpt = BlogEngine.getExcerpt(p.body, 140);
           ul.innerHTML += `
             <li class="post-item">
-              <a href="blog-post.html?id=${p.id}" class="post-item-title">${p.title}</a>
+              <a href="p/${p.id}.html" class="post-item-title">${p.title}</a>
               <div class="post-item-meta">${BlogEngine.formatDate(p.date)}</div>
               ${excerpt ? `<div class="post-item-excerpt">${excerpt}</div>` : ''}
             </li>
