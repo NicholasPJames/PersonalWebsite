@@ -21,7 +21,7 @@
   const CELL = 18;
   const STEP_MS = 220;
   const SEED_DENSITY = 0.16;
-  const PAINT_RADIUS = 3; // cells
+  const PAINT_RADIUS = 2; // cells
 
   let cols = 0, rows = 0;
   let docW = 0, docH = 0;
@@ -240,7 +240,7 @@
         const distSq = dx * dx + dy * dy;
         if (distSq > PAINT_RADIUS * PAINT_RADIUS) continue;
         // Solid in center, sparser at edges so it forms an organic blob
-        const fill = distSq <= 1 ? 1 : Math.random() < 0.85 ? 1 : 0;
+        const fill = distSq === 0 ? 1 : Math.random() < 0.45 ? 1 : 0;
         if (!fill) continue;
         const nx = (cx + dx + cols) % cols;
         const ny = (cy + dy + rows) % rows;
