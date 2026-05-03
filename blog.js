@@ -226,18 +226,48 @@ const BlogEngine = (() => {
     // unchanged and get restored to original $...$ at the very end.
     let result = escHtml(text)
       .replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`)
-      // Images ![alt|caption](src) — MUST come before bold/italic and links
+      // Embeds ![alt|caption](src) — chooses image / YouTube / video / audio
+      // based on the URL. MUST come before bold/italic and links.
       .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, altAndCaption, src) => {
         const pipeIndex = altAndCaption.indexOf('|');
         const alt = pipeIndex >= 0 ? altAndCaption.slice(0, pipeIndex).trim() : altAndCaption.trim();
         const caption = pipeIndex >= 0 ? altAndCaption.slice(pipeIndex + 1).trim() : '';
 
-        const imgTag = `<img src="${escAttr(src)}" alt="${escAttr(alt)}" style="max-width:50%; height:auto; display:block; margin: 0 auto;">`;
+        const wrapFigure = (inner, centered) => {
+          const figStyle = centered
+            ? 'text-align:center; margin: 2em 0;'
+            : 'margin: 1.5em 0;';
+          if (caption) {
+            return `<figure style="${figStyle}">${inner}<figcaption style="font-size: 0.9em; color: #888; margin-top: 0.75em; font-style: italic;">${escHtml(caption)}</figcaption></figure>`;
+          }
+          return `<figure style="${figStyle}">${inner}</figure>`;
+        };
 
-        if (caption) {
-          return `<figure style="text-align:center; margin: 2em 0;">${imgTag}<figcaption style="font-size: 0.9em; color: #888; margin-top: 0.75em; font-style: italic;">${escHtml(caption)}</figcaption></figure>`;
+        // YouTube: matches youtu.be/ID, youtube.com/watch?v=ID, /embed/ID, /shorts/ID
+        const yt = src.match(
+          /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/
+        );
+        if (yt) {
+          const id = yt[1];
+          const iframe = `<iframe src="https://www.youtube.com/embed/${escAttr(id)}" title="${escAttr(alt || 'YouTube video')}" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width:100%; aspect-ratio:16/9; border:0; display:block;"></iframe>`;
+          return wrapFigure(`<div style="max-width:80%; margin:0 auto;">${iframe}</div>`, true);
         }
-        return `<figure style="margin: 1.5em 0;">${imgTag}</figure>`;
+
+        // Video files
+        if (/\.(mp4|webm|mov|m4v)(\?|#|$)/i.test(src)) {
+          const video = `<video controls preload="metadata" style="max-width:80%; height:auto; display:block; margin:0 auto;"><source src="${escAttr(src)}"></video>`;
+          return wrapFigure(video, true);
+        }
+
+        // Audio files
+        if (/\.(mp3|wav|ogg|m4a|aac|flac)(\?|#|$)/i.test(src)) {
+          const audio = `<audio controls preload="metadata" style="width:80%; display:block; margin:0 auto;"><source src="${escAttr(src)}"></audio>`;
+          return wrapFigure(audio, true);
+        }
+
+        // Image (default)
+        const imgTag = `<img src="${escAttr(src)}" alt="${escAttr(alt)}" style="max-width:50%; height:auto; display:block; margin: 0 auto;">`;
+        return wrapFigure(imgTag, !!caption);
       })
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/__(.+?)__/g, '<strong>$1</strong>')
