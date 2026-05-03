@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nick James</title>
+    <link>https://njames.xyz</link>
+    <description>Mathematics and comparative literature.</description>
+    <language>en-us</language>
+    <atom:link href="https://njames.xyz/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 03 May 2026 05:05:22 GMT</lastBuildDate>
+    <item>
+      <title>Picasso and Imperfection</title>
+      <link>https://njames.xyz/p/3d5f141b-5f5d-46e6-ae2c-750bf97898f1.html</link>
+      <guid isPermaLink="true">https://njames.xyz/p/3d5f141b-5f5d-46e6-ae2c-750bf97898f1.html</guid>
+      <pubDate>Tue, 28 Apr 2026 01:53:37 GMT</pubDate>
+      <description>Introduction I love art. Both of my sisters are artists, and it&apos;s something I&apos;ve always been surrounded by at home growing up. It&apos;s one of the reasons why I study Comparative Literature at Princeton today! I&apos;m currently taking a class on Byzantine Art on Mount Athos (ART 430), but for this post I wanted to write about one of my favorite artists, Pablo Picasso. In particular, I want to focus on on…</description>
+    </item>
+    <item>
+      <title>Founding and Lotus Eating</title>
+      <link>https://njames.xyz/p/9411f824-aeb5-4ae2-91a2-34d25c7d6253.html</link>
+      <guid isPermaLink="true">https://njames.xyz/p/9411f824-aeb5-4ae2-91a2-34d25c7d6253.html</guid>
+      <pubDate>Fri, 03 Apr 2026 20:35:24 GMT</pubDate>
+      <description>Χαῖρετε ὦ φίλοι! A lot of my past blog posts have been about classes I&apos;ve taken a while back during my time in college. I figured I should write something more recent, so let&apos;s do Greek stuff since that&apos;s what I spend most of my time working on. I&apos;m currently taking CLG 108, which is an introduction to Homeric Greek as a dialect. Up until this point I have taken 3 and a half years of straight Gre…</description>
+    </item>
+    <item>
+      <title>Don Quixote and Founding</title>
+      <link>https://njames.xyz/p/ee39c978-dd47-4276-b67b-8938ebcbea9a.html</link>
+      <guid isPermaLink="true">https://njames.xyz/p/ee39c978-dd47-4276-b67b-8938ebcbea9a.html</guid>
+      <pubDate>Fri, 06 Mar 2026 20:00:59 GMT</pubDate>
+      <description>Given that I study comparative literature, I often get asked the question &quot;what is your favorite book of all time?&quot; This naturally is super hard to answer, since it really depends on the person asking the question since interests always vary a ton. But since people in startups and business are presumably reading this blog, I thought I would write about one of my favorites pertaining to idealism,…</description>
+    </item>
+    <item>
+      <title>Nationalism and the Power of the Human Mind</title>
+      <link>https://njames.xyz/p/cf335811-e3b5-40a2-a903-a2b801ea68a6.html</link>
+      <guid isPermaLink="true">https://njames.xyz/p/cf335811-e3b5-40a2-a903-a2b801ea68a6.html</guid>
+      <pubDate>Mon, 23 Feb 2026 17:07:16 GMT</pubDate>
+      <description>I&apos;ve been thinking a lot lately about what makes people do things. Not in the trite sense, but in one that is much deeper. What compels someone to devote years of their life to a cause? For example, why do people toil, and arduously suffer and dedicate themselves to a craft, a company, a nation, or a brand? Addressing a blog I made previously on the principle of least action, what pulls people ou…</description>
+    </item>
+    <item>
+      <title>Number Theory and Thinking Well</title>
+      <link>https://njames.xyz/p/89b4064b-5adc-47e5-bf14-a36cc0449759.html</link>
+      <guid isPermaLink="true">https://njames.xyz/p/89b4064b-5adc-47e5-bf14-a36cc0449759.html</guid>
+      <pubDate>Sat, 21 Feb 2026 23:34:05 GMT</pubDate>
+      <description>During my freshman year of college, I took a class with Fields medalist Manjul Bhargava. Unlike most professors, Manjul never has course textbooks for his classes. This class in particular (MAT 419) was about quadratic forms and p-adic number theory. It is easily the weirdest class I have ever taken in my life, and also taught me profound lessons on how to think better too. In this blog post, I w…</description>
+    </item>
+    <item>
+      <title>Laziness and Physics</title>
+      <link>https://njames.xyz/p/a5c07b16-aadb-417c-9039-a1d65eb34252.html</link>
+      <guid isPermaLink="true">https://njames.xyz/p/a5c07b16-aadb-417c-9039-a1d65eb34252.html</guid>
+      <pubDate>Fri, 20 Feb 2026 06:37:56 GMT</pubDate>
+      <description>For my first blog post, I want to write a reflection on laziness. This is something that I often talk about with my friends over dinner and such, but usually I write it on a napkin or just write with chalk on the table and it gets smudged. This is just a formal record of my thoughts on the matter. Introduction Let&apos;s start simple here. Fix two points and in the or whatever. Consider all smooth cur…</description>
+    </item>
+  </channel>
+</rss>
