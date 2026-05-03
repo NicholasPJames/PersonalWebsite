@@ -31,7 +31,55 @@
 
     <main class="wrap">
       <header class="header">
-        <h1>Nick James</h1>
+        <h1 id="hero-name"><span id="hero-text">Nick James</span><span class="typing-cursor" aria-hidden="true">|</span></h1>
+        <script>
+          // Loops the hero name between Greek and English, typing/erasing
+          // letter-by-letter for an LLM-streaming feel.
+          (function () {
+            const textEl = document.getElementById('hero-text');
+            const NAMES = ['Νίκος Τσάμης', 'Nick James'];
+            const TYPE_MS = 90;   // delay per typed character
+            const ERASE_MS = 55;  // delay per erased character
+            const HOLD_MS = 2200; // hold once a name is fully typed
+            const GAP_MS = 250;   // pause between erase and next type
+
+            // Clear synchronously so the static "Nick James" never paints.
+            textEl.textContent = '';
+
+            const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+            const notifyResize = () => window.dispatchEvent(new Event('resize'));
+
+            async function type(text) {
+              for (let i = 1; i <= text.length; i++) {
+                textEl.textContent = text.slice(0, i);
+                notifyResize();
+                await sleep(TYPE_MS);
+              }
+            }
+
+            async function erase() {
+              const current = textEl.textContent;
+              for (let i = current.length - 1; i >= 0; i--) {
+                textEl.textContent = current.slice(0, i);
+                notifyResize();
+                await sleep(ERASE_MS);
+              }
+            }
+
+            (async function loop() {
+              let idx = 0;
+              // First appearance: type the Greek name from empty.
+              await type(NAMES[idx]);
+              while (true) {
+                await sleep(HOLD_MS);
+                await erase();
+                await sleep(GAP_MS);
+                idx = (idx + 1) % NAMES.length;
+                await type(NAMES[idx]);
+              }
+            })();
+          })();
+        </script>
         <p class="subtitle">"Anyone can cook. But only the fearless can be great." — Chef Gusteau</p>
       </header>
 

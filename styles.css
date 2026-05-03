@@ -90,6 +90,19 @@ body {
   line-height: 1.05;
 }
 
+.typing-cursor {
+  display: inline-block;
+  margin-left: .04em;
+  font-weight: 400;
+  color: var(--muted);
+  animation: caret-blink 1s steps(2, end) infinite;
+}
+
+@keyframes caret-blink {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
 .subtitle {
   margin: 0;
   color: var(--muted);
