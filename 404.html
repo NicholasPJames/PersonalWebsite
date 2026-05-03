@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Loading… — Nick James</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script>
+      // GitHub Pages serves this file for any unknown URL.
+      //
+      // For paths like /p/<id>.html (a freshly published post whose static
+      // page hasn't been rebuilt yet by the GitHub Action), redirect the
+      // visitor to the dynamic /blog-post.html?id=<id> page so the post
+      // loads immediately. Everything else falls through to a real 404.
+      (function () {
+        const m = window.location.pathname.match(/^\/p\/([^\/]+?)\.html$/);
+        if (m) {
+          const id = decodeURIComponent(m[1]);
+          window.location.replace('/blog-post.html?id=' + encodeURIComponent(id));
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <nav class="nav">
+      <a href="/index.html" class="nav-name" style="border:none;">Nick James</a>
+      <div class="nav-links">
+        <a href="/index.html">Home</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/bookshelf.html">Bookshelf</a>
+      </div>
+    </nav>
+
+    <main class="post-wrap">
+      <h1 class="post-title">Page not found</h1>
+      <p class="muted-text">
+        The page you're looking for doesn't exist. Try heading
+        <a href="/index.html">home</a> or browsing the
+        <a href="/blog.html">blog</a>.
+      </p>
+    </main>
+  </body>
+</html>
