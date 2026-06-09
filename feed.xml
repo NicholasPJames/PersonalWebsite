@@ -6,7 +6,14 @@
     <description>Mathematics and comparative literature.</description>
     <language>en-us</language>
     <atom:link href="https://njames.xyz/feed.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Tue, 09 Jun 2026 19:34:10 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 09 Jun 2026 21:50:38 GMT</lastBuildDate>
+    <item>
+      <title>Sphere Packing and Simplicity</title>
+      <link>https://njames.xyz/p/6fe6ee05-dda2-483a-9801-cf4670ad0335.html</link>
+      <guid isPermaLink="true">https://njames.xyz/p/6fe6ee05-dda2-483a-9801-cf4670ad0335.html</guid>
+      <pubDate>Tue, 09 Jun 2026 13:08:14 GMT</pubDate>
+      <description>In geometry, one of the most central objects you can have is a ball in higher dimensional space. One natural question to ask is how densely you can fill space with equal, non-overlapping balls. It&apos;s something a child would ask, similarly to stacking oranges, and yet it has been one of the most difficult problems in all of mathematics. The proofs run from a single application of Euler&apos;s formula to…</description>
+    </item>
     <item>
       <title>The Iliad and Failure</title>
       <link>https://njames.xyz/p/ed7d8469-3130-4f48-8589-4e28458ce618.html</link>
