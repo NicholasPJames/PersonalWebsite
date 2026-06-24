@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Not Everything is a Nail — Nick James</title>
+    <meta name="description" content="The title of this blog post is something I think about all the time. As society advances and technology becomes increasingly developed, what allows one to determine which tool is…" />
+    <meta property="og:title" content="Not Everything is a Nail" />
+    <meta property="og:description" content="The title of this blog post is something I think about all the time. As society advances and technology becomes increasingly developed, what allows one to determine which tool is…" />
+    <meta property="og:url" content="https://njames.xyz/p/5127981b-9d39-4956-b836-7f7c7d315223.html" />
+    <meta property="og:type" content="article" />
+    <meta property="og:image" content="https://njames.xyz/assets/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Not Everything is a Nail" />
+    <meta name="twitter:description" content="The title of this blog post is something I think about all the time. As society advances and technology becomes increasingly developed, what allows one to determine which tool is…" />
+    <meta name="twitter:image" content="https://njames.xyz/assets/og-image.png" />
+    <link rel="canonical" href="https://njames.xyz/p/5127981b-9d39-4956-b836-7f7c7d315223.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title="Nick James — Blog" href="/feed.xml" />
+    <link rel="stylesheet" href="../styles.css" />
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$']],
+          displayMath: [['$$', '$$']],
+          macros: {
+            // Sets
+            RR: "\\mathbb{R}",
+            CC: "\\mathbb{C}",
+            ZZ: "\\mathbb{Z}",
+            NN: "\\mathbb{N}",
+            QQ: "\\mathbb{Q}",
+            FF: "\\mathbb{F}",
+            HH: "\\mathbb{H}",
+            TT: "\\mathbb{T}",
+            // Topology
+            cl: "\\overline",
+            interior: "\\operatorname{int}",
+            bd: "\\partial",
+            supp: "\\operatorname{supp}",
+            diam: "\\operatorname{diam}",
+            dist: "\\operatorname{dist}",
+            // Algebra / Linear
+            id: "\\operatorname{id}",
+            im: "\\operatorname{im}",
+            ker: "\\operatorname{ker}",
+            coker: "\\operatorname{coker}",
+            rank: "\\operatorname{rank}",
+            tr: "\\operatorname{tr}",
+            End: "\\operatorname{End}",
+            Hom: "\\operatorname{Hom}",
+            Aut: "\\operatorname{Aut}",
+            GL: "\\operatorname{GL}",
+            SL: "\\operatorname{SL}",
+            // Analysis
+            norm: ["\\left\\|#1\\right\\|", 1],
+            abs: ["\\left|#1\\right|", 1],
+            ip: ["\\left\\langle #1,\\, #2\\right\\rangle", 2],
+            eps: "\\varepsilon",
+            ph: "\\varphi",
+            // Calculus / Differential
+            dd: ["\\,\\mathrm{d}#1", 1],
+            pd: ["\\frac{\\partial #1}{\\partial #2}", 2],
+            grad: "\\nabla",
+            Lapl: "\\Delta",
+            // Category theory
+            catC: "\\mathcal{C}",
+            catD: "\\mathcal{D}",
+            Ob: "\\operatorname{Ob}",
+            Mor: "\\operatorname{Mor}",
+            colim: "\\operatorname{colim}",
+            holim: "\\operatorname{holim}",
+            hocolim: "\\operatorname{hocolim}",
+            // Algebraic topology
+            Ho: "\\operatorname{Ho}",
+            Map: "\\operatorname{Map}",
+            hofib: "\\operatorname{hofib}",
+            hocofib: "\\operatorname{hocofib}",
+          }
+        }
+      };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <nav class="nav">
+      <a href="../index.html" class="nav-name" style="border:none;">Nick James</a>
+      <div class="nav-links">
+        <a href="../index.html">Home</a>
+        <a href="../blog.html" class="active">Blog</a>
+        <a href="../bookshelf.html">Bookshelf</a>
+      </div>
+    </nav>
+
+    <main class="post-wrap">
+      <a href="../blog.html" class="post-back">← All posts</a>
+
+      <div id="post-content">
+        <p class="muted-text">Loading...</p>
+      </div>
+    </main>
+
+    <script src="../blog.js"></script>
+    <script>
+      (async function () {
+        const id = "5127981b-9d39-4956-b836-7f7c7d315223";
+        const post = id ? await BlogEngine.getPost(id) : null;
+        const el = document.getElementById('post-content');
+
+        if (!post) {
+          el.innerHTML = '<p class="muted-text">Post not found.</p>';
+          return;
+        }
+
+        document.title = post.title + ' — Nick James';
+
+        el.innerHTML = `
+          <h1 class="post-title">${post.title}</h1>
+          <p class="post-date">${BlogEngine.formatDate(post.date)}</p>
+          <div class="post-body">${BlogEngine.renderMarkdown(post.body)}</div>
+        `;
+
+        (function waitForMathJax() {
+          if (window.MathJax?.typesetPromise) {
+            MathJax.typesetPromise([el]);
+          } else {
+            setTimeout(waitForMathJax, 100);
+          }
+        })();
+      })();
+    </script>
+  </body>
+</html>
