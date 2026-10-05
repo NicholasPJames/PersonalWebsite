@@ -262,6 +262,7 @@
         if (previewVisible) {
           const body = document.getElementById('post-body').value;
           document.getElementById('preview-content').innerHTML = BlogEngine.renderMarkdown(body);
+          BlogEngine.engraveFigures(document.getElementById('preview-content'));
           pane.style.display = '';
           if (window.MathJax) {
             MathJax.typesetPromise([document.getElementById('preview-content')]);

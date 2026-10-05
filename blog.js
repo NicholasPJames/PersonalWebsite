@@ -282,6 +282,91 @@ const BlogEngine = (() => {
     return result;
   }
 
+  // ── Figures ──
+  // Restyles inline SVG diagrams at render time so they read like line art
+  // from a 1980s textbook: black ink on white paper, labels in Computer
+  // Modern, and any tinted fill replaced by a halftone dot screen. Works on
+  // diagrams drawn for either a light or a dark background.
+  const INK = '#111';
+  const PAPER = '#fff';
+  let figureCount = 0;
+
+  function parseColor(c) {
+    if (!c) return null;
+    c = c.trim().toLowerCase();
+    if (c === 'none' || c === 'transparent' || c.startsWith('url(')) return null;
+    if (c === 'white') return [255, 255, 255, 1];
+    if (c === 'black') return [0, 0, 0, 1];
+    let m = c.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/);
+    if (m) {
+      let h = m[1];
+      if (h.length === 3) h = h.replace(/./g, (x) => x + x);
+      return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)).concat(1);
+    }
+    m = c.match(/^rgba?\(([^)]+)\)$/);
+    if (m) {
+      const v = m[1].split(',').map(parseFloat);
+      return [v[0], v[1], v[2], v.length > 3 ? v[3] : 1];
+    }
+    return null;
+  }
+
+  const lum = ([r, g, b]) => (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  const sat = ([r, g, b]) => (Math.max(r, g, b) - Math.min(r, g, b)) / 255;
+
+  function engraveFigures(root) {
+    root.querySelectorAll('svg').forEach((svg) => {
+      if (svg.dataset.engraved) return;
+      svg.dataset.engraved = '1';
+
+      const els = [svg, ...svg.querySelectorAll('*')];
+      const colorOf = (el, prop) => parseColor(el.style[prop] || el.getAttribute(prop));
+
+      // A diagram drawn for a dark page uses light colours as its "ink".
+      const all = els.flatMap((el) => [colorOf(el, 'fill'), colorOf(el, 'stroke')]).filter(Boolean);
+      const darkCanvas = all.length > 0 && !all.some((c) => lum(c) < 0.4);
+
+      const fid = 'halftone-' + (++figureCount);
+      const ns = 'http://www.w3.org/2000/svg';
+      const defs = svg.querySelector('defs') || svg.insertBefore(document.createElementNS(ns, 'defs'), svg.firstChild);
+      defs.insertAdjacentHTML('beforeend',
+        `<pattern id="${fid}" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">` +
+        `<rect width="4" height="4" fill="${PAPER}"/><circle cx="2" cy="2" r=".95" fill="${INK}"/></pattern>`);
+
+      const classify = (c) => {
+        const l = lum(c);
+        if (darkCanvas) return l > 0.6 ? 'ink' : 'paper';
+        if (l < 0.5) return 'ink';
+        if (l > 0.88 && sat(c) < 0.08) return 'paper';
+        return 'tint';
+      };
+
+      els.forEach((el) => {
+        if (el.closest('pattern')) return;
+        el.removeAttribute('filter');
+        el.style.filter = 'none';
+
+        const fill = colorOf(el, 'fill');
+        if (fill) {
+          const k = classify(fill);
+          const isText = el.tagName === 'text' || el.closest('text');
+          el.style.fill = k === 'ink' || isText ? INK : k === 'paper' ? PAPER : `url(#${fid})`;
+          el.style.fillOpacity = '1';
+        }
+
+        const stroke = colorOf(el, 'stroke');
+        if (stroke) {
+          el.style.stroke = classify(stroke) === 'paper' && !darkCanvas ? PAPER : INK;
+          el.style.strokeOpacity = '1';
+        }
+
+        if (el.tagName === 'text' || el.tagName === 'svg') {
+          el.style.fontFamily = 'var(--font)';
+        }
+      });
+    });
+  }
+
   function escHtml(s) {
     return String(s)
       .replace(/&/g, '&amp;')
@@ -303,5 +388,6 @@ const BlogEngine = (() => {
     formatDate,
     getExcerpt,
     renderMarkdown,
+    engraveFigures,
   };
 })();

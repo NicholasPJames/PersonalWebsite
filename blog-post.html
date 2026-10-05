@@ -118,6 +118,8 @@
           <div class="post-body">${BlogEngine.renderMarkdown(post.body)}</div>
         `;
 
+        BlogEngine.engraveFigures(el);
+
         (function waitForMathJax() {
           if (window.MathJax?.typesetPromise) {
             MathJax.typesetPromise([el]);

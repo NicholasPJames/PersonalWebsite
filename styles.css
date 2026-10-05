@@ -136,13 +136,13 @@ body {
 a {
   color: var(--link);
   text-decoration: none;
-  border-bottom: 1px solid var(--link-ul);
-  transition: border-color .15s, color .15s;
+  border-bottom: none;
+  transition: opacity .15s;
 }
 
 a:hover, a:focus {
   color: var(--fg);
-  border-bottom-color: var(--link-ul-hover);
+  opacity: .6;
   outline: none;
 }
 
@@ -162,7 +162,7 @@ a:hover, a:focus {
   border-bottom-color: transparent;
 }
 
-.meta a:hover { color: var(--fg); border-bottom-color: var(--link-ul-hover); }
+.meta a:hover { color: var(--fg); }
 
 .dot { opacity: .35; font-size: .85rem; }
 
@@ -176,11 +176,8 @@ a:hover, a:focus {
 }
 
 .link-list li::before {
-  content: "↗\FE0E";
-  font-variant-emoji: text;
-  margin-right: 8px;
-  opacity: .35;
-  font-size: .8em;
+  content: "•";
+  margin-right: 10px;
 }
 
 /* ── Blog rows (home preview) ── */
@@ -325,9 +322,7 @@ a:hover, a:focus {
 .post-body svg {
   display: block;
   max-width: 100%;
-  background: #111;
-  border-radius: 0;
-  padding: 20px;
+  background: var(--bg);
   margin: 1.5em auto;
 }
 
@@ -839,7 +834,6 @@ body {
 .nav { border-bottom: 1.5px solid var(--fg); }
 .post-body { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
 .post-body h2, .post-body h3 { text-align: left; }
-.post-body svg { background: #000; }
 
 /* Keep equations a touch darker so thin rules (fractions, roots) survive. */
 mjx-container { color: var(--fg); }
