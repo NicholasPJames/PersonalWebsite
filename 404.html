@@ -4,6 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Loading… — Nick James</title>
+    <link href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/font/Serif/cmun-serif.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/font/Typewriter/cmun-typewriter.css" rel="stylesheet" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/styles.css" />
     <script>
@@ -23,6 +25,12 @@
     </script>
   </head>
   <body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <filter id="ink" x="-2%" y="-2%" width="104%" height="104%">
+        <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="grain" />
+        <feDisplacementMap in="SourceGraphic" in2="grain" scale="1.4" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </svg>
     <nav class="nav">
       <a href="/index.html" class="nav-name" style="border:none;">Nick James</a>
       <div class="nav-links">

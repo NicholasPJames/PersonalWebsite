@@ -12,14 +12,19 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="https://njames.xyz/assets/og-image.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/font/Serif/cmun-serif.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/font/Typewriter/cmun-typewriter.css" rel="stylesheet" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate" type="application/rss+xml" title="Nick James — Blog" href="/feed.xml" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <filter id="ink" x="-2%" y="-2%" width="104%" height="104%">
+        <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="grain" />
+        <feDisplacementMap in="SourceGraphic" in2="grain" scale="1.4" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </svg>
     <nav class="nav">
       <span class="nav-name">Nick James</span>
       <div class="nav-links">
@@ -80,7 +85,7 @@
             })();
           })();
         </script>
-        <p class="subtitle">"Anyone can cook. But only the fearless can be great." — Chef Gusteau</p>
+        <p class="subtitle">“Anyone can cook. But only the fearless can be great.” — Chef Gusteau</p>
       </header>
 
       <section class="card" aria-label="Bio">
@@ -118,7 +123,6 @@
       </section>
     </main>
 
-    <script src="life.js"></script>
     <script src="blog.js"></script>
     <script>
       (async function () {

@@ -238,7 +238,7 @@ const BlogEngine = (() => {
             ? 'text-align:center; margin: 2em 0;'
             : 'margin: 1.5em 0;';
           if (caption) {
-            return `<figure style="${figStyle}">${inner}<figcaption style="font-size: 0.9em; color: #888; margin-top: 0.75em; font-style: italic;">${escHtml(caption)}</figcaption></figure>`;
+            return `<figure style="${figStyle}">${inner}<figcaption style="font-size: 0.9em; color: #555; margin-top: 0.75em; font-style: italic;">${escHtml(caption)}</figcaption></figure>`;
           }
           return `<figure style="${figStyle}">${inner}</figure>`;
         };

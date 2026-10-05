@@ -1,17 +1,17 @@
-/* njames.xyz — minimal black & white */
+/* njames.xyz — black & white, set like a 1985 math textbook */
 :root {
-  --bg: #f5f0e6;
-  --fg: #2c3e2c;
-  --muted: rgba(44,80,44,.55);
-  --border: rgba(44,80,44,.12);
-  --border-hover: rgba(44,80,44,.30);
-  --link: #3a5c3a;
-  --link-ul: rgba(44,80,44,.22);
-  --link-ul-hover: rgba(44,80,44,.60);
-  --shadow: 0 8px 32px rgba(44,80,44,.12);
+  --bg: #fff;
+  --fg: #111;
+  --muted: rgba(0,0,0,.6);
+  --border: rgba(0,0,0,.12);
+  --border-hover: rgba(0,0,0,.30);
+  --link: #111;
+  --link-ul: rgba(0,0,0,.22);
+  --link-ul-hover: rgba(0,0,0,.60);
+  --shadow: none;
   --radius: 0;
-  --font: "EB Garamond", Georgia, serif;
-  --mono: ui-monospace, "Cascadia Code", "Fira Code", "Courier New", monospace;
+  --font: "Computer Modern Serif", "Latin Modern Roman", "CMU Serif", Georgia, serif;
+  --mono: "Computer Modern Typewriter", "CMU Typewriter Text", "Courier New", monospace;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -25,7 +25,6 @@ body {
   background: var(--bg);
   color: var(--fg);
   font: 18px/1.6 var(--font);
-  -webkit-font-smoothing: antialiased;
 }
 
 /* ── Nav ── */
@@ -39,9 +38,7 @@ body {
   padding: 0 clamp(20px, 5vw, 56px);
   height: 52px;
   border-bottom: 1px solid var(--border);
-  background: rgba(245,240,230,.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--bg);
 }
 
 .nav-name {
@@ -285,7 +282,7 @@ a:hover, a:focus {
 .post-item-excerpt {
   margin-top: 6px;
   font-size: 1rem;
-  color: rgba(44,80,44,.75);
+  color: rgba(0,0,0,.75);
   line-height: 1.55;
 }
 
@@ -328,7 +325,7 @@ a:hover, a:focus {
 .post-body svg {
   display: block;
   max-width: 100%;
-  background: #2c3e2c;
+  background: #111;
   border-radius: 0;
   padding: 20px;
   margin: 1.5em auto;
@@ -349,13 +346,13 @@ a:hover, a:focus {
 .post-body code {
   font-family: var(--mono);
   font-size: .87em;
-  background: rgba(44,80,44,.08);
+  background: rgba(0,0,0,.08);
   border-radius: 0;
   padding: .15em .4em;
 }
 
 .post-body pre {
-  background: rgba(44,80,44,.05);
+  background: rgba(0,0,0,.05);
   border: 1px solid var(--border);
   border-radius: 0;
   padding: 16px;
@@ -415,7 +412,7 @@ a:hover, a:focus {
 .editor-input,
 .editor-textarea {
   width: 100%;
-  background: rgba(44,80,44,.04);
+  background: rgba(0,0,0,.04);
   border: 1px solid var(--border);
   border-radius: 0;
   color: var(--fg);
@@ -428,7 +425,7 @@ a:hover, a:focus {
 
 .editor-input:focus,
 .editor-textarea:focus {
-  border-color: rgba(255,255,255,.38);
+  border-color: rgba(0,0,0,.6);
 }
 
 .editor-textarea {
@@ -450,8 +447,8 @@ a:hover, a:focus {
 }
 
 .btn-primary {
-  background: #2c3e2c;
-  color: #f5f0e6;
+  background: #111;
+  color: #fff;
 }
 
 .btn-primary:hover { opacity: .88; }
@@ -482,7 +479,7 @@ a:hover, a:focus {
 }
 
 .toolbar button {
-  background: rgba(44,80,44,.06);
+  background: rgba(0,0,0,.06);
   border: 1px solid var(--border);
   border-radius: 0;
   color: var(--fg);
@@ -492,7 +489,7 @@ a:hover, a:focus {
   transition: background .12s;
 }
 
-.toolbar button:hover { background: rgba(44,80,44,.12); }
+.toolbar button:hover { background: rgba(0,0,0,.12); }
 
 /* ── Posts management table ── */
 .posts-table {
@@ -535,8 +532,8 @@ a:hover, a:focus {
 }
 
 .post-status-badge.published {
-  border-color: rgba(255,255,255,.22);
-  color: #2c3e2c;
+  border-color: rgba(0,0,0,.4);
+  color: #111;
 }
 
 /* ── Utility ── */
@@ -548,8 +545,8 @@ a:hover, a:focus {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  background: #2c3e2c;
-  color: #f5f0e6;
+  background: #111;
+  color: #fff;
   font-size: .875rem;
   font-weight: 500;
   padding: 10px 18px;
@@ -593,7 +590,7 @@ a:hover, a:focus {
   top: 50%;
   transform: translateY(-60%);
   z-index: 10;
-  background: rgba(44,80,44,.06);
+  background: rgba(0,0,0,.06);
   border: 1px solid var(--border);
   color: var(--fg);
   font-size: 2rem;
@@ -608,7 +605,7 @@ a:hover, a:focus {
   backdrop-filter: blur(8px);
 }
 
-.shelf-arrow:hover { background: rgba(44,80,44,.12); }
+.shelf-arrow:hover { background: rgba(0,0,0,.12); }
 .shelf-arrow-left { left: -6px; }
 .shelf-arrow-right { right: -6px; }
 
@@ -643,7 +640,7 @@ a:hover, a:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(44,80,44,.04);
+  background: rgba(0,0,0,.04);
   padding: 16px;
   font-size: .9rem;
   color: var(--muted);
@@ -685,7 +682,7 @@ a:hover, a:focus {
   position: fixed;
   inset: 0;
   z-index: 200;
-  background: rgba(44,80,44,.55);
+  background: rgba(0,0,0,.55);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -707,7 +704,7 @@ a:hover, a:focus {
   width: 90%;
   max-height: 85vh;
   overflow-y: auto;
-  background: rgba(242,237,225,.98);
+  background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 36px;
@@ -775,7 +772,7 @@ a:hover, a:focus {
 .book-detail-summary {
   font-size: 1rem;
   line-height: 1.7;
-  color: rgba(44,80,44,.85);
+  color: rgba(0,0,0,.85);
 }
 
 .book-detail-summary p {
@@ -801,3 +798,49 @@ a:hover, a:focus {
     padding: 28px 20px;
   }
 }
+
+/* ── Vintage print ──
+   Computer Modern is the face Knuth drew for TeX, so body text and MathJax
+   (whose TeX font is Computer Modern) share one typeface. Two layers fake
+   1980s offset printing: a hairline stroke + shadow thickens the strokes
+   (ink spread on paper), and the #ink SVG filter, inlined at the top of each
+   page's <body>, roughens glyph edges so they look blotchy. Both are
+   inherited by MathJax output, so equations get the same treatment. */
+body {
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+  font-kerning: normal;
+  text-rendering: optimizeLegibility;
+  -webkit-text-stroke: .35px currentColor;
+  text-shadow: 0 0 .6px rgba(0,0,0,.55);
+}
+
+.nav-name, .nav-links, main { filter: url(#ink); }
+
+/* Cards become plain ruled sections, numbered like a textbook. */
+.wrap { counter-reset: section; }
+.card {
+  border: none;
+  border-top: 1.5px solid var(--fg);
+  padding: 18px 0 8px;
+  margin: 28px 0;
+}
+.card h2 {
+  counter-increment: section;
+  font-size: 1.15rem;
+  font-weight: bold;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--fg);
+}
+.card h2::before { content: "§" counter(section) ". "; }
+
+.subtitle { font-style: italic; }
+.nav { border-bottom: 1.5px solid var(--fg); }
+.post-body { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.post-body h2, .post-body h3 { text-align: left; }
+.post-body svg { background: #000; }
+
+/* Keep equations a touch darker so thin rules (fractions, roots) survive. */
+mjx-container { color: var(--fg); }
+img, video, iframe, .book-cover, .book-detail-cover { -webkit-text-stroke: 0; }

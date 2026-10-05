@@ -1,6 +1,6 @@
 # Simple Black Static Site (GitHub Pages)
 
-This repo is a minimal personal landing page: **black background, white text**, with a bio and links.
+This repo is a minimal personal landing page: **white background, black text** in Computer Modern, with a bio and links.
 
 ## Quick start (GitHub Pages)
 
@@ -22,6 +22,6 @@ This repo is a minimal personal landing page: **black background, white text**, 
 ## Customize
 
 - Edit the name/tagline in `index.html`.
-- Edit the styles in `styles.css` (already set up for black/white).
+- Edit the styles in `styles.css` (black on white, vintage print look).
 
 That's it.
