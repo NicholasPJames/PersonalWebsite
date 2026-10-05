@@ -1,4 +1,27 @@
 /* njames.xyz — black & white, set like a 1985 math textbook */
+/* TeX Gyre Termes is GUST's free Times (GUST Font License,
+   assets/fonts/GUST-FONT-LICENSE.txt); MathJax uses its matching Termes math font. */
+@font-face {
+  font-family: "TeX Gyre Termes";
+  src: url("assets/fonts/texgyretermes-regular.otf") format("opentype");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "TeX Gyre Termes";
+  src: url("assets/fonts/texgyretermes-italic.otf") format("opentype");
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "TeX Gyre Termes";
+  src: url("assets/fonts/texgyretermes-bold.otf") format("opentype");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "TeX Gyre Termes";
+  src: url("assets/fonts/texgyretermes-bolditalic.otf") format("opentype");
+  font-weight: 700; font-style: italic; font-display: swap;
+}
+
 :root {
   --bg: #fff;
   --fg: #111;
@@ -10,7 +33,7 @@
   --link-ul-hover: rgba(0,0,0,.60);
   --shadow: none;
   --radius: 0;
-  --font: "Computer Modern Serif", "Latin Modern Roman", "CMU Serif", Georgia, serif;
+  --font: "TeX Gyre Termes", "Times New Roman", Times, "GFS Didot", serif;
   --mono: "Computer Modern Typewriter", "CMU Typewriter Text", "Courier New", monospace;
 }
 
@@ -19,6 +42,7 @@
 html, body {
   height: 100%;
   margin: 0;
+  background: #fff;
 }
 
 body {
@@ -795,19 +819,14 @@ a:hover, a:focus {
 }
 
 /* ── Vintage print ──
-   Computer Modern is the face Knuth drew for TeX, so body text and MathJax
-   (whose TeX font is Computer Modern) share one typeface. Two layers fake
-   1980s offset printing: a hairline stroke + shadow thickens the strokes
-   (ink spread on paper), and the #ink SVG filter, inlined at the top of each
-   page's <body>, roughens glyph edges so they look blotchy. Both are
-   inherited by MathJax output, so equations get the same treatment. */
+   Times was the face of phototypeset 1980s math books (Springer's yellow
+   GTM series and others). The #ink SVG
+   filter, inlined at the top of each page's <body>, softens corners and
+   fills hairlines the way ink spreads on uncoated paper. MathJax output is
+   inside the filtered region, so equations get the same treatment. */
 body {
-  -webkit-font-smoothing: auto;
-  -moz-osx-font-smoothing: auto;
   font-kerning: normal;
   text-rendering: optimizeLegibility;
-  -webkit-text-stroke: .35px currentColor;
-  text-shadow: 0 0 .6px rgba(0,0,0,.55);
 }
 
 .nav-name, .nav-links, main { filter: url(#ink); }

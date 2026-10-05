@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
     <title>Sphere Packing and Simplicity — Nick James</title>
     <meta name="description" content="In geometry, one of the most central objects you can have is a ball in higher dimensional space. One natural question to ask is how densely you can fill space with equal, non-over…" />
     <meta property="og:title" content="Sphere Packing and Simplicity" />
@@ -15,13 +16,14 @@
     <meta name="twitter:description" content="In geometry, one of the most central objects you can have is a ball in higher dimensional space. One natural question to ask is how densely you can fill space with equal, non-over…" />
     <meta name="twitter:image" content="https://njames.xyz/assets/og-image.png" />
     <link rel="canonical" href="https://njames.xyz/p/6fe6ee05-dda2-483a-9801-cf4670ad0335.html" />
-    <link href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/font/Serif/cmun-serif.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=GFS+Didot&display=swap" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/font/Typewriter/cmun-typewriter.css" rel="stylesheet" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate" type="application/rss+xml" title="Nick James — Blog" href="/feed.xml" />
-    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="../styles.css?v=6" />
     <script>
       MathJax = {
+        output: { font: 'mathjax-termes' },
         tex: {
           inlineMath: [['$', '$']],
           displayMath: [['$$', '$$']],
@@ -82,13 +84,15 @@
         }
       };
     </script>
-    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"></script>
   </head>
   <body>
     <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-      <filter id="ink" x="-2%" y="-2%" width="104%" height="104%">
-        <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="grain" />
-        <feDisplacementMap in="SourceGraphic" in2="grain" scale="1.4" xChannelSelector="R" yChannelSelector="G" />
+      <filter id="ink" x="-1%" y="-1%" width="102%" height="102%" color-interpolation-filters="sRGB">
+        <feGaussianBlur stdDeviation=".45" />
+        <feComponentTransfer>
+          <feFuncA type="linear" slope="2.6" intercept="-.35" />
+        </feComponentTransfer>
       </filter>
     </svg>
     <nav class="nav">
@@ -108,7 +112,7 @@
       </div>
     </main>
 
-    <script src="../blog.js"></script>
+    <script src="../blog.js?v=6"></script>
     <script>
       (async function () {
         const id = "6fe6ee05-dda2-483a-9801-cf4670ad0335";

@@ -89,8 +89,8 @@ function renderPostPage(template, post) {
 
   // 2) Adjust asset / link paths since file lives in /p/.
   html = html
-    .replace(/href="styles\.css"/g, 'href="../styles.css"')
-    .replace(/src="blog\.js"/g, 'src="../blog.js"')
+    .replace(/href="styles\.css/g, 'href="../styles.css')
+    .replace(/src="blog\.js/g, 'src="../blog.js')
     .replace(/href="index\.html"/g, 'href="../index.html"')
     .replace(/href="blog\.html"/g, 'href="../blog.html"')
     .replace(/href="bookshelf\.html"/g, 'href="../bookshelf.html"');
